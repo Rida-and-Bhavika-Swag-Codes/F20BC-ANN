@@ -11,7 +11,7 @@ Coursework 1 \
 - Hyperbolic Tanget
 - Sigmoid
 ### Overfitting (extra / not required)
-- train test split and cross validation
+- Train/Test split and cross validation
 ### HyperParameters
 - Input Nodes:
 - Output Nodes: 1 (binary)
