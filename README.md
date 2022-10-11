@@ -6,6 +6,7 @@ Coursework 1
 3. https://www.kdnuggets.com/2019/11/build-artificial-neural-network-scratch-part-1.html
 4. https://towardsdatascience.com/feed-forward-neural-networks-how-to-successfully-build-them-in-python-74503409d99a (**THIS ONE IS RLLY GOOD**)
 5. https://towardsdatascience.com/coding-neural-network-forward-propagation-and-backpropagtion-ccf8cf369f76
+6. https://github.com/omaraflak/Medium-Python-Neural-Network/blob/master/network.py
 ## For our ANN: 
 ### Activation Functions: 
 - Logistic
