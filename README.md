@@ -1,7 +1,7 @@
 # F20BC-ANN
 Coursework 1 
 ## Dump your sources here:
-1.
+1. https://hackernoon.com/deep-learning-feedforward-neural-networks-explained-c34ae3f084f1?ref=hackernoon.com
 2.
 3.
 ## For our ANN: 
