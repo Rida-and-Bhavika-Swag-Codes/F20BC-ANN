@@ -4,7 +4,7 @@ Coursework 1
 1. https://hackernoon.com/deep-learning-feedforward-neural-networks-explained-c34ae3f084f1?ref=hackernoon.com
 2. https://hackernoon.com/building-a-feedforward-neural-network-from-scratch-in-python-d3526457156b
 3. https://www.kdnuggets.com/2019/11/build-artificial-neural-network-scratch-part-1.html
-4. 
+4. https://towardsdatascience.com/feed-forward-neural-networks-how-to-successfully-build-them-in-python-74503409d99a (**THIS ONE IS RLLY GOOD**)
 ## For our ANN: 
 ### Activation Functions: 
 - Logistic
