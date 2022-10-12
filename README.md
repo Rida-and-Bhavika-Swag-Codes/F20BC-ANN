@@ -23,3 +23,7 @@ Coursework 1
 - Learning rate
 - Loss fuction: Cross Entropy
 - Gradient Descent types: all 3?
+
+column names: 
+![image](https://user-images.githubusercontent.com/97593074/195399089-962ca97b-ef0a-4333-a1e0-1d0da0e51822.png)
+
