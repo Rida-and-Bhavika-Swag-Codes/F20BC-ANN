@@ -2,8 +2,8 @@ import numpy as np
 
 class Layer:
 
-    def __init__(self, nodes, output_connections, activation):
-        self.input = None #input vector
+    def __init__(self, nodes, output_connections, activation, input):
+        self.input = input #input vector
         self.output = None #output vector
         self.num_nodes = nodes
 
@@ -16,8 +16,12 @@ class Layer:
         self.bias = np.random.rand(output_connections, 1) - 0.5
 
     def propogate_forward(self):
+        print("dimensions of weights:", self.weights.shape)
+        print("dimensions of input:", self.input.shape)
         self.output = np.dot(self.input, self.weights) + self.bias
-        return self.output
+        out = tanh(self.output)
+        print(out)
+        return tanh(self.output)
 
     def update_param(self, learning_rate, gradients):
         self.weights = self.weights - learning_rate * gradients

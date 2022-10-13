@@ -27,7 +27,7 @@ class ANN:
     def train(self):
 
         for l in self.layers:
-            output += layer.Layer.propogate_forward(l)
+            layer.Layer.propogate_forward(l)
 
         #propogate_backward()
         #layer.update_weights
@@ -50,12 +50,14 @@ class ANN:
         print(len(nodes_per_layer))
 
         #append input layer
-        self.layers.append(layer.Layer(len(self.input), 7, 0))
+        l = layer.Layer(len(self.input[0]), 7, 0, self.input)
+        self.layers.append(l)
         print("adding input layer")
 
         #append hidden layers
         for i in range (len(nodes_per_layer)-1):
-            self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i]))
+            self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i], l.propogate_forward())) #the previous layers output is this layer's input
+            l = self.layers[i+1]
             print("added 1 hidden layer")
 
         #append output layer
