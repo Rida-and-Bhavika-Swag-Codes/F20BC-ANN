@@ -12,9 +12,9 @@ class ANN:
     Parameters: 
 
     """
-    def __init__(self, learn_rate, activation, loss, input, output):
+    def __init__(self, learn_rate, loss, input, output):
         self.input = input  #input vector 
-        self.layers = [layer.Layer(len(input), self.input, 7, activation, 0)] #assume 7 nodes in the next hidden layer
+        self.layers = [] #assume 7 nodes in the next hidden layer
         self.learning_rate = learn_rate
         self.training_epochs = 50
 
@@ -25,7 +25,10 @@ class ANN:
 
     """train ANN"""
     def train(self):
-        propogate_forward()
+
+        for l in self.layers:
+            output += layer.Layer.propogate_forward(l)
+
         #propogate_backward()
         #layer.update_weights
 
@@ -41,22 +44,31 @@ class ANN:
     activations - list of activations (in the order of the hidden layer)
     
     """
-    def setHidden(self, *nodes_per_layer, activations):
-        #define number of outgoingn connections from this layer
-        
-        if len(*nodes_per_layer) < 2: #if only 1 or no hidden layer
-            outnodes = self.output
-        else:
-            outnodes = nodes_per_layer[1:]
+    def setLayers(self, activations, *nodes_per_layer):
+        print("the activations are", activations)
+        print("the variable argument is ", nodes_per_layer)
+        print(len(nodes_per_layer))
 
-        for i in range (len(*nodes_per_layer)):
-            self.layers.append[layer.Layer(nodes_per_layer[i], self.input, outnodes[i], activations[i], 0)]
-        pass
+        #append input layer
+        self.layers.append(layer.Layer(len(self.input), 7, 0))
+        print("adding input layer")
 
+        #append hidden layers
+        for i in range (len(nodes_per_layer)-1):
+            self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i]))
+            print("added 1 hidden layer")
+
+        #append output layer
+        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0)) #output layer has no output connections or activation function
+        print("added 1 output layer")
+
+        print(self.layers)
+    
 
 #loss functions
 """
 Mean squared error loss function
+
 Parameters: 
 output - output of the ANN
 y - true value
@@ -71,17 +83,6 @@ def hinge_loss():
     pass
 
 
-#
-def propogate_forward():
-    #1. calculate weighted sum
-    #calculate Activations of Hidden Layer
-    
-    #calculate Activations of output layer
-    pass
-def propogate_backward():
-    # compute loss - find derivative of the weights and biases at each layer
-    # update params
-    pass
 
 
 
