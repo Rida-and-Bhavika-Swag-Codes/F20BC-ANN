@@ -2,10 +2,10 @@ import numpy as np
 
 class Layer:
 
-    def __init__(self, input, output_connections, activation, weighted_sum):
-        self.input = None #input vector
+    def __init__(self, nodes, input, output_connections, activation, weighted_sum):
+        self.input = input #input vector
         self.output = None #output vector
-        self.num_nodes = input
+        self.num_nodes = nodes
         #switch case for activations
         self.activation , self.activation_derivative = tanh(weighted_sum)
 
