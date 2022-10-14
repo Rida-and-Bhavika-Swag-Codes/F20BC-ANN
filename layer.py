@@ -12,16 +12,13 @@ class Layer:
 
         #number of rows in weight matrix = number of nodes in the layer
         #number of colums = number of nodes in the next layer/number of output connections
-        self.weights = np.random.rand(self.num_nodes, output_connections) - 0.5
+        self.weights = np.random.rand(output_connections, self.num_nodes) - 0.5
         self.bias = np.random.rand(output_connections, 1) - 0.5
 
     def propogate_forward(self):
-        print("dimensions of weights:", self.weights.shape)
-        print("dimensions of input:", self.input.shape)
-        self.output = np.dot(self.input, self.weights) + self.bias
-        out = tanh(self.output)
-        print(out)
-        return tanh(self.output)
+        self.output = np.dot(self.weights, self.input) + self.bias
+        out = ReLU(self.output)
+        print("Actication is", out)
 
     def update_param(self, learning_rate, gradients):
         self.weights = self.weights - learning_rate * gradients
@@ -41,4 +38,7 @@ class Layer:
 #activation functions:
 def tanh(weighted_sum):
     return np.tanh(weighted_sum), 1-np.tanh(weighted_sum)**2
+
+def ReLU(Z):
+    return np.maximum(Z, 0)
 

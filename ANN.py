@@ -61,7 +61,7 @@ class ANN:
             print("added 1 hidden layer")
 
         #append output layer
-        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0)) #output layer has no output connections or activation function
+        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0, l.propogate_forward)) #output layer has no output connections or activation function
         print("added 1 output layer")
 
         print(self.layers)
