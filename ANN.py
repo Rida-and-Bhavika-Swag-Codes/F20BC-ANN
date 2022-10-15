@@ -18,15 +18,17 @@ class ANN:
         self.training_epochs = 1
 
         #switch case for loss HERE?
-        #self.loss_function = losss
+        #self.loss_function = loss
         #self.GD_type = None
         #self.dropout_rate = None
 
     """train ANN"""
     def train(self):
         for j in range(self.training_epochs):
+            print("propogating forward")
             layer.Layer.propogate_forward(self.layers[0],self.layers[0].input)
             for i in range(len(self.layers)-2):
+                print("propogating forward")
                 layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
             self.layers[-1].input = self.layers[-2].output #set activations of the last layer
 
