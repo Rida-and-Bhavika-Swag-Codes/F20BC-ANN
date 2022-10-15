@@ -2,11 +2,11 @@
 Coursework 1 
 
 Note: Network now configurable for activations and no. of hidden layers/nodes. Currently using 3 hidden layers. 
-input layer -> tanh, 30nodes
-hidden 1 -> relu, 7 nodes
-hidden 2 -> sigmoid, 5 nodes
-hidden 3 -> sigmoid, 3 nodes
-output layer -> NA, 2 nodes
+1. input layer -> tanh, 30nodes
+2. hidden 1 -> relu, 7 nodes
+3. hidden 2 -> sigmoid, 5 nodes
+4. hidden 3 -> sigmoid, 3 nodes
+5. output layer -> NA, 2 nodes
 
 ## Dump your sources here:
 1. https://hackernoon.com/deep-learning-feedforward-neural-networks-explained-c34ae3f084f1?ref=hackernoon.com
