@@ -8,7 +8,7 @@ class Layer:
         self.num_nodes = nodes
 
         #switch case for activations here?
-        self.activation = activation 
+        self.activation = self.setActivation(activation)
 
         #number of rows in weight matrix = number of nodes in the layer
         #number of colums = number of nodes in the next layer/number of output connections
@@ -21,8 +21,11 @@ class Layer:
 
         # calculate weighted sum
         wsum = np.dot(self.weights, input) + self.bias
+        # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
+        wsum = np.array(wsum, dtype = np.float32)
         # apply activation
-        self.output = relu(wsum)
+        if self.activation: #if self.activation null then this is an output layer and we don't forward propogate from here
+            self.output = self.activation(wsum)
 
     """Use with backpropogation"""
     def update_param(self, learning_rate, gradients):
@@ -36,12 +39,23 @@ class Layer:
         print("Bias:", self.bias)
         print("Input vector:", self.input)
         print("Output vector:", self.output)
-
+    
+    """Take a integer as input and match it with an activation function. Then, return matched function"""
+    def setActivation(self, activation):
+        match activation:
+            case 1 : return tanh
+            case 2 : return relu
+            case 3 : return sigmoid
+            case 0 : None
+        #add error handling
 
 #activation functions:
-def tanh(weighted_sum):
-    return np.tanh(weighted_sum), 1-np.tanh(weighted_sum)**2
+def tanh(wsum):
+    return np.tanh(wsum)
 
 def relu(wsum):
     return np.maximum(wsum, 0)
+
+def sigmoid(wsum): #aka. logistic activation
+    return 1.0 / (1 + np.exp(-wsum))
 
