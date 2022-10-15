@@ -1,5 +1,7 @@
 # F20BC-ANN
 Coursework 1 
+
+Note:   currently building a network with 1 hidden layer of 7 nodes and output layer with 1 node. Activation function relu in all layers. 
 ## Dump your sources here:
 1. https://hackernoon.com/deep-learning-feedforward-neural-networks-explained-c34ae3f084f1?ref=hackernoon.com
 2. https://hackernoon.com/building-a-feedforward-neural-network-from-scratch-in-python-d3526457156b
