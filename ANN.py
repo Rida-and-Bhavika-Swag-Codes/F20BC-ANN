@@ -3,9 +3,6 @@ import layer
 
 class ANN:
 
-    #currently building a network with 1 hidden layer of 7 nodes and output layer with 2 nodes. Learning rate of 0.1. Loss function - MSE. 
-    # Activation function tanh in all layers. 200 training epochs. Stochastic gradient descent. No test-train split. 
-
     """
     Initialise network with hyperparameters
 
