@@ -18,7 +18,7 @@ class ANN:
         self.output = output #Target class
 
         self.learning_rate = learn_rate
-        self.training_epochs = 2
+        self.training_epochs = 1
 
         #switch case for loss HERE?
         #self.loss_function = losss
@@ -31,6 +31,7 @@ class ANN:
             layer.Layer.propogate_forward(self.layers[0],self.layers[0].input)
             for i in range(len(self.layers)-2):
                 layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
+            self.layers[-1].input = self.layers[-2].output #set activations of the last layer
 
             #propogate_backward()
             #layer.update_weights
