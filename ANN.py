@@ -18,15 +18,17 @@ class ANN:
         self.training_epochs = 1
 
         #switch case for loss HERE?
-        #self.loss_function = losss
+        #self.loss_function = loss
         #self.GD_type = None
         #self.dropout_rate = None
 
     """train ANN"""
     def train(self):
         for j in range(self.training_epochs):
+            print("propogating forward")
             layer.Layer.propogate_forward(self.layers[0],self.layers[0].input)
             for i in range(len(self.layers)-2):
+                print("propogating forward")
                 layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
             self.layers[-1].input = self.layers[-2].output #set activations of the last layer
 
@@ -42,7 +44,7 @@ class ANN:
     Append hidden layers
 
     Parameters:
-    *nodes_per_layer - nodes per hidden layer 
+    *nodes_per_layer - nodes per hidden layer and the output layer
     activations - list of activations (in the order of the hidden layer)
     
     """
@@ -52,14 +54,14 @@ class ANN:
         print("number of hidden layers", len(nodes_per_layer)-1, "\n")
 
         #append input layer
-        l = layer.Layer(len(self.input[0]), 7, 0)
+        l = layer.Layer(len(self.input[0]), 7, activations[0])
         l.input = self.input
         self.layers.append(l)
         print("adding input layer")
 
         #append hidden layers
         for i in range (len(nodes_per_layer)-1):
-            self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i])) #replace propogate forward with the output instead
+            self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1])) #replace propogate forward with the output instead
             l = self.layers[i+1]
             print("added 1 hidden layer")
 
