@@ -29,7 +29,8 @@ class Layer:
 
     """Use with backpropogation"""
     def update_param(self, learning_rate, gradients):
-        self.weights = self.weights - learning_rate * gradients
+        self.weights -= learning_rate * gradients
+        self.bias -= learning_rate * gradients
 
     """debug function"""
     def get_properties(self):
