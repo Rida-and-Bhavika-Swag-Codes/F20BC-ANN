@@ -75,17 +75,25 @@ class ANN:
 Mean squared error loss function
 
 Parameters: 
-output - output of the ANN
+output - ** predicted ** output of the ANN
 y - true value
 """
 def mse(output, y):
-    pass
+    return np.mean(np.power(y - output, 2))
 
-def b_cross_entropy():
-    pass
+def b_cross_entropy(output, y):
+    # adding epsilon to the predicted output to avoid log(0) error
+    epsilon = 1e-7    
+    """ kinda doubtful about this, i think without multiplying -(1/np.size(y)) is loss but with is cost???""" 
+    loss = np.multiply(y, np.log(output + epsilon)) + np.multiply(1 - y , np.log(1 - output + epsilon))
+    return -(1/np.size(y)) * loss
 
-def hinge_loss():
-    pass
+def hinge_loss(output, y):
+    noutput = np.array([-1 if i == 0 else i for i in output])
+    ny = np.array([-1 if i == 0 else i for i in y])
+
+    return np.mean([max(0, 1 - act * pred) for act, pred in zip(ny, noutput)])
+    
 
 
 
