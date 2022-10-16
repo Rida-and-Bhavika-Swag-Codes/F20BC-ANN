@@ -70,29 +70,25 @@ class ANN:
         print("added 1 output layer")
     
 
-#loss functions
+# loss functions
 """
-Mean squared error loss function
-
 Parameters: 
-output - ** predicted ** output of the ANN
+pred - ** predicted ** output of the ANN
 y - true value
 """
-def mse(output, y):
-    return np.mean(np.power(y - output, 2))
+def mse(pred, y):
+    return np.mean(np.power(y - pred, 2))
 
-def b_cross_entropy(output, y):
+def b_cross_entropy(pred, y):
     # adding epsilon to the predicted output to avoid log(0) error
     epsilon = 1e-7    
-    return -np.mean(np.multiply(y, np.log(output + epsilon)) + np.multiply(1 - y , np.log(1 - output + epsilon)))
+    return -np.mean(np.multiply(y, np.log(pred + epsilon)) + np.multiply(1 - y , np.log(1 - pred + epsilon)))
 
-def hinge_loss(output, y):
-    noutput = np.array([-1 if i == 0 else i for i in output])
+def hinge_loss(pred, y):
+    npred = np.array([-1 if i == 0 else i for i in pred])
     ny = np.array([-1 if i == 0 else i for i in y])
 
-    return np.mean([max(0, 1 - act * pred) for act, pred in zip(ny, noutput)])
-    
-
+    return np.mean([max(0, 1 - actual * predicted) for actual, predicted in zip(ny, npred)])
 
 
 
