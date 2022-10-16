@@ -49,7 +49,7 @@ class Layer:
             case 0 : None
         #add error handling
 
-#activation functions:
+# activation functions:
 def tanh(wsum):
     return np.tanh(wsum)
 
@@ -59,3 +59,15 @@ def relu(wsum):
 def sigmoid(wsum): #aka. logistic activation
     return 1.0 / (1 + np.exp(-wsum))
 
+# derivatives of activation functions
+def dtanh(wsum):
+    tanh = tanh(wsum)
+    return wsum * (1 - np.square(tanh))
+
+def drelu(wsum):
+    relu = relu(wsum)
+    return np.int64(relu > 0)
+
+def dsigmoid(wsum):
+    sigmoid = sigmoid(wsum)
+    return sigmoid * (1 - sigmoid)
