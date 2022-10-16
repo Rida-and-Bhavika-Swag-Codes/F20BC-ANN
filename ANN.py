@@ -84,9 +84,7 @@ def mse(output, y):
 def b_cross_entropy(output, y):
     # adding epsilon to the predicted output to avoid log(0) error
     epsilon = 1e-7    
-    """ kinda doubtful about this, i think without multiplying -(1/np.size(y)) is loss but with is cost???""" 
-    loss = np.multiply(y, np.log(output + epsilon)) + np.multiply(1 - y , np.log(1 - output + epsilon))
-    return -(1/np.size(y)) * loss
+    return -np.mean(np.multiply(y, np.log(output + epsilon)) + np.multiply(1 - y , np.log(1 - output + epsilon)))
 
 def hinge_loss(output, y):
     noutput = np.array([-1 if i == 0 else i for i in output])
