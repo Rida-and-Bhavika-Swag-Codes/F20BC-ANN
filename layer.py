@@ -8,28 +8,40 @@ class Layer:
         self.num_nodes = nodes
 
         #switch case for activations here?
-        self.activation = self.setActivation(activation)
+        self.activation, self.activation_prime = self.setActivation(activation)
 
         #number of rows in weight matrix = number of nodes in the layer
         #number of colums = number of nodes in the next layer/number of output connections
         self.weights = np.random.rand(output_connections, self.num_nodes) - 0.5
         self.bias = np.random.rand(output_connections, 1) - 0.5
+    
+    def calculate_wsum(self, input): # might need this for gradient descent 
+        # calculate weighted sum
+        wsum = np.dot(self.weights, input) + self.bias
+        # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
+        return np.array(wsum, dtype = np.float32)
 
     def propogate_forward(self, input):
         #set input vector
         self.input = input
-
-        # calculate weighted sum
-        wsum = np.dot(self.weights, input) + self.bias
-        # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
-        wsum = np.array(wsum, dtype = np.float32)
+        wsum = self.calculate_wsum(input)
+        
         # apply activation
         if self.activation: #if self.activation null then this is an output layer and we don't forward propogate from here
             self.output = self.activation(wsum)
-
+    
     """Use with backpropogation"""
     def update_param(self, learning_rate, gradients):
-        self.weights = self.weights - learning_rate * gradients
+        self.weights -= learning_rate * gradients
+        self.bias -= learning_rate * gradients
+
+    def propogate_backward(self, oerror, learning_rate):
+        """ calculate grad here?? """
+        gradients = None
+        self.update_param(learning_rate, gradients)
+        
+        if self.activation_prime:
+            return self.activation_prime(self.input) * oerror
 
     """debug function"""
     def get_properties(self):
@@ -43,9 +55,9 @@ class Layer:
     """Take a integer as input and match it with an activation function. Then, return matched function"""
     def setActivation(self, activation):
         match activation:
-            case 1 : return tanh
-            case 2 : return relu
-            case 3 : return sigmoid
+            case 1 : return tanh, dtanh
+            case 2 : return relu, drelu
+            case 3 : return sigmoid, dsigmoid
             case 0 : None
         #add error handling
 
@@ -71,3 +83,4 @@ def drelu(wsum):
 def dsigmoid(wsum):
     sigmoid = sigmoid(wsum)
     return sigmoid * (1 - sigmoid)
+
