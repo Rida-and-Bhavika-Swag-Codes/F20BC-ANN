@@ -26,6 +26,7 @@ class Layer:
         # apply activation
         if self.activation: #if self.activation null then this is an output layer and we don't forward propogate from here
             self.output = self.activation(wsum)
+            return self.output
     
     """Use with backpropogation"""
     def update_param(self, learning_rate, gradients):

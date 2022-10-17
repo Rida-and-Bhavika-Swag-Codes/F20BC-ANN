@@ -70,6 +70,14 @@ class ANN:
         print("added 1 output layer")
     
 
+""" using one_hot_encode as this is binary classification """
+def one_hot_encode(y, nclasses):
+    y_onehot = np.zeros((y.shape[0], nclasses))
+    id = [np.arange(y.shape[0]), y]
+    y_onehot[id] = 1
+    return y_onehot
+
+
 # loss functions
 """
 Parameters: 
@@ -79,25 +87,28 @@ y - true value
 def mse(pred, y):
     return np.mean(np.power(y - pred, 2))
 
-def b_cross_entropy(pred, y):
+def dmse(pred, y):
+    return (1 / pred.shape[0]) * (1/pred.shape[-1]) * -2 * np.sum(y - pred, axis=0)
+
+def bce(pred, y):
     # adding epsilon to the predicted output to avoid log(0) error
     epsilon = 1e-7    
     return -np.mean(np.multiply(y, np.log(pred + epsilon)) + np.multiply(1 - y , np.log(1 - pred + epsilon)))
 
-def hinge_loss(pred, y):
+def dbce(pred, y):
+    pass
+
+def hingeloss(pred, y):
     npred = np.array([-1 if i == 0 else i for i in pred])
     ny = np.array([-1 if i == 0 else i for i in y])
 
     return np.mean([max(0, 1 - actual * predicted) for actual, predicted in zip(ny, npred)])
 
+def dhingeloss(pred, y):
+    pass
 
 
-
-
-
-
-
-
-
-
-
+""" gradient descent functions """
+# stochastic gradient descent 
+def sgd(ann, X, Y, learning_rate, nclasses): 
+    pass
