@@ -30,15 +30,14 @@ class Layer:
     """Use with backpropogation"""
     def update_param(self, learning_rate, gradients):
         self.weights -= learning_rate * gradients
-        self.bias -= learning_rate * gradients
 
-    def propogate_backward(self, oerror, learning_rate):
-        """ calculate grad here?? """
-        gradients = None
-        self.update_param(learning_rate, gradients)
+    def propogate_backward(self, error, learning_rate):
+        ierror = np.dot(error, self.weights.T) # input error
+        werror = np.dot(self.input.T, error) # weights error
+        self.update_param(learning_rate, werror)
 
         if self.activation_prime:
-            return self.activation_prime(self.input) * oerror
+            return self.activation_prime(self.input) * ierror
 
     """debug function"""
     def get_properties(self):
