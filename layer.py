@@ -13,18 +13,15 @@ class Layer:
         #number of rows in weight matrix = number of nodes in the layer
         #number of colums = number of nodes in the next layer/number of output connections
         self.weights = np.random.rand(output_connections, self.num_nodes) - 0.5
-        self.bias = np.random.rand(output_connections, 1) - 0.5
-    
-    def calculate_wsum(self, input): # might need this for gradient descent 
-        # calculate weighted sum
-        wsum = np.dot(self.weights, input) + self.bias
-        # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
-        return np.array(wsum, dtype = np.float32)
+        self.bias = np.random.rand(output_connections, 1) - 0.5     
 
     def propogate_forward(self, input):
         #set input vector
         self.input = input
-        wsum = self.calculate_wsum(input)
+        # calculate weighted sum
+        wsum = np.dot(self.weights, input) + self.bias
+        # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
+        wsum = np.array(wsum, dtype = np.float32)
         
         # apply activation
         if self.activation: #if self.activation null then this is an output layer and we don't forward propogate from here
@@ -39,7 +36,7 @@ class Layer:
         """ calculate grad here?? """
         gradients = None
         self.update_param(learning_rate, gradients)
-        
+
         if self.activation_prime:
             return self.activation_prime(self.input) * oerror
 
@@ -58,7 +55,7 @@ class Layer:
             case 1 : return tanh, dtanh
             case 2 : return relu, drelu
             case 3 : return sigmoid, dsigmoid
-            case 0 : None
+            case 0 : return None, None
         #add error handling
 
 # activation functions:
