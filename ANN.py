@@ -39,8 +39,8 @@ class ANN:
                 print("propogating forward")
                 layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
             self.layers[-1].input = self.layers[-2].output #set activations of the last layer
-
-            # propogate_backward()
+            # gradient descent
+            print("\nmean loss:", self.sgd(self.input, self.output, 2))
 
     """test ANN
     input: x values given to the model
