@@ -16,7 +16,7 @@ class ANN:
         self.output = output #Target class
 
         self.learning_rate = learn_rate
-        self.training_epochs = 1
+        self.training_epochs = 2
         
         self.loss_function = None
         self.loss_prime = None
@@ -42,10 +42,20 @@ class ANN:
             # gradient descent
             print("\nmean loss:", self.sgd(self.input, self.output, 2))
 
-    """test ANN"""
-    def test(self):
-        #cross validation, train-test split or both
-        pass
+    """test ANN
+    input: x values given to the model
+    returns the predicted labels for input"""
+    def test(self, input):
+         # predict output for given input
+        predictions = []
+        input = input.T
+        #forward propogate over all samples of the given input
+        for j in range(len(self.input)):
+            layer.Layer.propogate_forward(self.layers[0],input)
+            for i in range(len(self.layers) - 1):
+                layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
+            predictions.append(self.layers[-1].input)
+        return predictions
 
     """
     Append hidden layers
@@ -80,14 +90,16 @@ class ANN:
     """ gradient descent functions """
     # stochastic gradient descent 
     def sgd(self, X, Y, nclasses): 
+        print("in gd")
         total_loss = 0
         pred = self.layers[-1].input.T
         for p, y in zip(pred, Y):
             total_loss += self.loss_function(p, y)
             error = self.loss_prime(p, y)
 
-            for i in range(len(self.layers)-1, -1):
-                layer.Layer.propogate_backward(self.layers[i], error, self.learning_rate)
+            for l in reversed(self.layers[:-1]):
+                print("back prop")
+                layer.Layer.propogate_backward(l, error, self.learning_rate)
 
         return total_loss / len(X)
 
