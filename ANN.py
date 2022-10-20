@@ -16,7 +16,7 @@ class ANN:
         self.output = output #Target class
 
         self.learning_rate = learn_rate
-        self.training_epochs = 1
+        self.training_epochs = 500
         
         self.loss_function = None
         self.loss_prime = None
