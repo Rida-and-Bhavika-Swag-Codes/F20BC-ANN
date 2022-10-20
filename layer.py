@@ -29,7 +29,7 @@ class Layer:
             return self.output
 
     def propogate_backward(self, error, learning_rate):
-        pass # returns weight and bias gradient
+        pass
 
     """debug function"""
     def get_properties(self):

@@ -14,9 +14,6 @@ class ANN:
         self.layers = [] #assume 7 nodes in the next hidden layer
         self.output = output #Target class
 
-        self.weights = []
-        self.biases = []
-
         self.learning_rate = learn_rate
         self.training_epochs = 1
         
@@ -42,8 +39,7 @@ class ANN:
                 layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
             self.layers[-1].input = self.layers[-2].output #set activations of the last layer
 
-            #propogate_backward()
-            #layer.update_weights
+            # propogate_backward()
 
     """test ANN"""
     def test(self):
@@ -73,18 +69,11 @@ class ANN:
         for i in range (len(nodes_per_layer)-1):
             current_layer = layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1])
             self.layers.append(current_layer) #replace propogate forward with the output instead
-            #l = self.layers[i+1]
-            self.layers.append(current_layer)
-            self.weights.append(current_layer.weights)
-            self.biases.append(current_layer.bias)
             print("added 1 hidden layer")
 
         #append output layer
         output_layer = layer.Layer(nodes_per_layer[-1], 0, 0)
         self.layers.append(output_layer) #output layer has no output connections or activation function
-        self.layers.append(output_layer)
-        self.weights.append(output_layer.weights)
-        self.biases.append(output_layer.bias)
         print("added 1 output layer")
     
 
@@ -94,23 +83,29 @@ class ANN:
     def sgd(self, X, Y, nclasses): # w minimises the function and needs to be estimated
         total_loss = 0
         for x, y in zip(X, Y):
-            x = x.reshape(1, -1)
-            y = y.reshape(1)
-
             y_onehot = one_hot_encode(y, nclasses) # true y
-            pred = layer.Layer.propogate_forward(x)
+        #     pred = layer.Layer.propogate_forward(x)
 
-            total_loss += self.loss_function(pred, y_onehot)
-            error = self.loss_prime(pred, y_onehot)
-            wgrad, bgrad = layer.Layer.propogate_backward(error, self.learning_rate)
-            # incomplete
+        #     total_loss += self.loss_function(pred, y_onehot)
+        #     error = self.loss_prime(pred, y_onehot)
+        #     layer.Layer.propogate_backward(error, self.learning_rate)
+
+        # return total_loss / len(X)
+
+
+
+            # updating parameters, just do this in backprop
+            # for i in range(len(self.layers)):
+            # # updating parameters
+            #     self.layers[i].weights += self.learning_rate * -self.layers[i].wgrad
+            #     self.layers[i].bias += self.learning_rate * -self.layers[i].bgrad
+
             
 
 """ using one_hot_encode as this is binary classification """
 def one_hot_encode(y, nclasses):
     y_onehot = np.zeros((y.shape[0], nclasses))
-    id = [np.arange(y.shape[0]), y]
-    y_onehot[id] = 1
+    y_onehot[np.arange(y.shape[0]), y] = 1
     return y_onehot
 
 
