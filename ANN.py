@@ -83,22 +83,17 @@ class ANN:
     def sgd(self, X, Y, nclasses): # w minimises the function and needs to be estimated
         total_loss = 0
         for x, y in zip(X, Y):
+            x = np.array(x)
+            x = x.reshape(1, -1)
+            y = y.reshape(1)
             y_onehot = one_hot_encode(y, nclasses) # true y
-        #     pred = layer.Layer.propogate_forward(x)
+            pred = layer.Layer.propogate_forward(x)
 
-        #     total_loss += self.loss_function(pred, y_onehot)
-        #     error = self.loss_prime(pred, y_onehot)
-        #     layer.Layer.propogate_backward(error, self.learning_rate)
+            total_loss += self.loss_function(pred, y_onehot)
+            error = self.loss_prime(pred, y_onehot)
+            layer.Layer.propogate_backward(error, self.learning_rate)
 
-        # return total_loss / len(X)
-
-
-
-            # updating parameters, just do this in backprop
-            # for i in range(len(self.layers)):
-            # # updating parameters
-            #     self.layers[i].weights += self.learning_rate * -self.layers[i].wgrad
-            #     self.layers[i].bias += self.learning_rate * -self.layers[i].bgrad
+        return total_loss / len(X)
 
             
 
