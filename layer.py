@@ -34,8 +34,8 @@ class Layer:
         bgrad = error * 1
 
         # updating the parameters
-        self.weights += self.learning_rate * -wgrad
-        self.bias += self.learning_rate * -bgrad
+        self.weights += learning_rate * -wgrad
+        self.bias += learning_rate * -bgrad
 
     """debug function"""
     def get_properties(self):
