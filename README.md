@@ -3,14 +3,14 @@ Coursework 1
 
 ### Tasks:
 Coding: 
-1. Class Architecture
-2. Forward Propogation (Logistic, Relu, Hyperbolic Tangent)
-3. Backward Propogation (Binary Cross Entropy, 2 others) 
-4. Gradient Descent (SGD, Mini-batch, Batch) 
+1. Class Architecture -done
+2. Forward Propogation (Logistic, Relu, Hyperbolic Tangent) -done
+3. Backward Propogation (Binary Cross Entropy, 2 others) -bhavika
+4. Gradient Descent (SGD, Mini-batch, Batch) - bhavika
 5. Impement Learning Rate Schedule
 6. Train-Test Split/ Cross-Validation 
 7. Implement one hot encoding when using 2 output nodes
-8. Dropout Rate
+8. Dropout Rate - rida
 9. Graphical Application
 
 Visualisation: 
