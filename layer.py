@@ -27,18 +27,9 @@ class Layer:
         if self.activation: #if self.activation null then this is an output layer and we don't forward propogate from here
             self.output = self.activation(wsum)
             return self.output
-    
-    """Use with backpropogation"""
-    def update_param(self, learning_rate, gradients):
-        self.weights -= learning_rate * gradients
 
     def propogate_backward(self, error, learning_rate):
-        ierror = np.dot(error, self.weights.T) # input error
-        werror = np.dot(self.input.T, error) # weights error
-        self.update_param(learning_rate, werror)
-
-        if self.activation_prime:
-            return self.activation_prime(self.input) * ierror
+        pass # returns weight and bias gradient
 
     """debug function"""
     def get_properties(self):
