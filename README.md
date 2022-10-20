@@ -32,8 +32,7 @@ Note: Network now configurable for activations and no. of hidden layers/nodes. C
 5. https://towardsdatascience.com/coding-neural-network-forward-propagation-and-backpropagtion-ccf8cf369f76
 6. https://github.com/omaraflak/Medium-Python-Neural-Network/blob/master/network.py
 7. https://github.com/jaymody/backpropagation/blob/master/nn.ipynb
-8. for sgd - https://analyticsindiamag.com/a-beginners-guide-to-stochastic-gradient-descent-from-scratch/
-9. Previous F20BC Repository: https://github.com/syedkhajahussainsa/F21BC--Biologically-Inspired-Computation-cw
+8. Previous F20BC Repository: https://github.com/syedkhajahussainsa/F21BC--Biologically-Inspired-Computation-cw
 ## For our ANN: 
 ### Activation Functions: 
 - Logistic
