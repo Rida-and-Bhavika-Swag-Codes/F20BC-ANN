@@ -55,7 +55,6 @@ class ANN:
             for i in range(len(self.layers) - 1):
                 layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
             predictions.append(self.layers[-1].input)
-
         return predictions
 
     """
