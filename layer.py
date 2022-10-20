@@ -34,8 +34,6 @@ class Layer:
         wgrad = error * self.activation(self.input.T)
         bgrad = error * 1
 
-        print("bgrad", bgrad)
-        print("wgrad", wgrad)
         # updating the parameters
         self.weights += learning_rate * -wgrad
         self.bias += learning_rate * -bgrad

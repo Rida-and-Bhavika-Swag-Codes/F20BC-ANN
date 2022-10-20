@@ -97,6 +97,7 @@ class ANN:
             total_loss += self.loss_function(p, y)
             error = self.loss_prime(p, y)
 
+            #update weights of all layers except output layer
             for l in reversed(self.layers[:-1]):
                 print("back prop")
                 layer.Layer.propogate_backward(l, error, self.learning_rate)
