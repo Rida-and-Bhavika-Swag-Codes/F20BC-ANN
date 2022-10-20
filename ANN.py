@@ -1,3 +1,4 @@
+from tkinter import Y
 import numpy as np
 import layer
 
@@ -67,31 +68,26 @@ class ANN:
 
         #append hidden layers
         for i in range (len(nodes_per_layer)-1):
-            current_layer = layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1])
-            self.layers.append(current_layer) #replace propogate forward with the output instead
+            self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1]))
             print("added 1 hidden layer")
 
         #append output layer
-        output_layer = layer.Layer(nodes_per_layer[-1], 0, 0)
-        self.layers.append(output_layer) #output layer has no output connections or activation function
+        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0))#output layer has no output connections or activation function
         print("added 1 output layer")
     
 
 
     """ gradient descent functions """
     # stochastic gradient descent 
-    def sgd(self, X, Y, nclasses): # w minimises the function and needs to be estimated
+    def sgd(self, X, Y, nclasses): 
         total_loss = 0
-        for x, y in zip(X, Y):
-            x = np.array(x)
-            x = x.reshape(1, -1)
-            y = y.reshape(1)
-            y_onehot = one_hot_encode(y, nclasses) # true y
-            pred = layer.Layer.propogate_forward(x)
+        pred = self.layers[-1].input.T
+        for p, y in zip(pred, Y):
+            total_loss += self.loss_function(p, y)
+            error = self.loss_prime(p, y)
 
-            total_loss += self.loss_function(pred, y_onehot)
-            error = self.loss_prime(pred, y_onehot)
-            layer.Layer.propogate_backward(error, self.learning_rate)
+            for i in range(len(self.layers)-1, -1):
+                layer.Layer.propogate_backward(self.layers[i], error, self.learning_rate)
 
         return total_loss / len(X)
 
