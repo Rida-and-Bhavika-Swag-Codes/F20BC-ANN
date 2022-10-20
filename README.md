@@ -1,7 +1,7 @@
 # F20BC-ANN
 Coursework 1 
 
-###Tasks:
+### Tasks:
 Coding: 
 1. Class Architecture
 2. Forward Propogation (Logistic, Relu, Hyperbolic Tangent)
