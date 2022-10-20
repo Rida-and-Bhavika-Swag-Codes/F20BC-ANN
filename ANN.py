@@ -42,10 +42,21 @@ class ANN:
 
             # propogate_backward()
 
-    """test ANN"""
-    def test(self):
-        #cross validation, train-test split or both
-        pass
+    """test ANN
+    input: x values given to the model
+    returns the predicted labels for input"""
+    def test(self, input):
+         # predict output for given input
+        predictions = []
+        input = input.T
+        #forward propogate over all samples of the given input
+        for j in range(len(self.input)):
+            layer.Layer.propogate_forward(self.layers[0],input)
+            for i in range(len(self.layers) - 1):
+                layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
+            predictions.append(self.layers[-1].input)
+
+        return predictions
 
     """
     Append hidden layers
