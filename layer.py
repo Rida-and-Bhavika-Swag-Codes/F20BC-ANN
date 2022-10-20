@@ -29,10 +29,13 @@ class Layer:
             return self.output
 
     def propogate_backward(self, loss, learning_rate):
+        print("in back prop")
         error = self.activation_prime(np.dot(loss, self.weights.T)) * loss
         wgrad = error * self.activation(self.input.T)
         bgrad = error * 1
 
+        print("bgrad", bgrad)
+        print("wgrad", wgrad)
         # updating the parameters
         self.weights += learning_rate * -wgrad
         self.bias += learning_rate * -bgrad

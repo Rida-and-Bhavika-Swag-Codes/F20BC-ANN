@@ -16,7 +16,7 @@ class ANN:
         self.output = output #Target class
 
         self.learning_rate = learn_rate
-        self.training_epochs = 500
+        self.training_epochs = 2
         
         self.loss_function = None
         self.loss_prime = None
@@ -90,14 +90,16 @@ class ANN:
     """ gradient descent functions """
     # stochastic gradient descent 
     def sgd(self, X, Y, nclasses): 
+        print("in gd")
         total_loss = 0
         pred = self.layers[-1].input.T
         for p, y in zip(pred, Y):
             total_loss += self.loss_function(p, y)
             error = self.loss_prime(p, y)
 
-            for i in range(len(self.layers)-1, -1):
-                layer.Layer.propogate_backward(self.layers[i], error, self.learning_rate)
+            for l in reversed(self.layers[:-1]):
+                print("back prop")
+                layer.Layer.propogate_backward(l, error, self.learning_rate)
 
         return total_loss / len(X)
 
