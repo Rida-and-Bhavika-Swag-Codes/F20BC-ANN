@@ -16,9 +16,16 @@ class ANN:
 
         self.learning_rate = learn_rate
         self.training_epochs = 1
-
-        #switch case for loss HERE?
-        #self.loss_function = loss
+        
+        self.loss_function = None
+        self.loss_prime = None
+        # 1 = mse, 2 = bce, 3 = hinge
+        match loss:
+            case 1 : self.loss_function, self.loss_prime = mse, dmse
+            case 2 : self.loss_function, self.loss_prime = bce, dbce
+            case 3 : self.loss_function, self.loss_prime = hingeloss, dhingeloss
+            case other: print("no loss function selected")
+         
         #self.GD_type = None
         #self.dropout_rate = None
 
@@ -32,8 +39,7 @@ class ANN:
                 layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
             self.layers[-1].input = self.layers[-2].output #set activations of the last layer
 
-            #propogate_backward()
-            #layer.update_weights
+            # propogate_backward()
 
     """test ANN"""
     def test(self):
@@ -61,20 +67,45 @@ class ANN:
 
         #append hidden layers
         for i in range (len(nodes_per_layer)-1):
-            self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1])) #replace propogate forward with the output instead
-            l = self.layers[i+1]
+            current_layer = layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1])
+            self.layers.append(current_layer) #replace propogate forward with the output instead
             print("added 1 hidden layer")
 
         #append output layer
-        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0)) #output layer has no output connections or activation function
+        output_layer = layer.Layer(nodes_per_layer[-1], 0, 0)
+        self.layers.append(output_layer) #output layer has no output connections or activation function
         print("added 1 output layer")
     
+
+
+    """ gradient descent functions """
+    # stochastic gradient descent 
+    def sgd(self, X, Y, nclasses): # w minimises the function and needs to be estimated
+        total_loss = 0
+        for x, y in zip(X, Y):
+            y_onehot = one_hot_encode(y, nclasses) # true y
+        #     pred = layer.Layer.propogate_forward(x)
+
+        #     total_loss += self.loss_function(pred, y_onehot)
+        #     error = self.loss_prime(pred, y_onehot)
+        #     layer.Layer.propogate_backward(error, self.learning_rate)
+
+        # return total_loss / len(X)
+
+
+
+            # updating parameters, just do this in backprop
+            # for i in range(len(self.layers)):
+            # # updating parameters
+            #     self.layers[i].weights += self.learning_rate * -self.layers[i].wgrad
+            #     self.layers[i].bias += self.learning_rate * -self.layers[i].bgrad
+
+            
 
 """ using one_hot_encode as this is binary classification """
 def one_hot_encode(y, nclasses):
     y_onehot = np.zeros((y.shape[0], nclasses))
-    id = [np.arange(y.shape[0]), y]
-    y_onehot[id] = 1
+    y_onehot[np.arange(y.shape[0]), y] = 1
     return y_onehot
 
 
@@ -88,7 +119,7 @@ def mse(pred, y):
     return np.mean(np.power(y - pred, 2))
 
 def dmse(pred, y):
-    return (1 / pred.shape[0]) * (1/pred.shape[-1]) * -2 * np.sum(y - pred, axis=0)
+    return 2*(pred-y)/y.shape[0]
 
 def bce(pred, y):
     # adding epsilon to the predicted output to avoid log(0) error
@@ -105,10 +136,4 @@ def hingeloss(pred, y):
     return np.mean([max(0, 1 - actual * predicted) for actual, predicted in zip(ny, npred)])
 
 def dhingeloss(pred, y):
-    pass
-
-
-""" gradient descent functions """
-# stochastic gradient descent 
-def sgd(ann, X, Y, learning_rate, nclasses): 
     pass
