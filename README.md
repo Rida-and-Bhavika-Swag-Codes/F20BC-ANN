@@ -1,6 +1,22 @@
 # F20BC-ANN
 Coursework 1 
 
+###Tasks:
+Coding: 
+1. Class Architecture
+2. Forward Propogation (Logistic, Relu, Hyperbolic Tangent)
+3. Backward Propogation (Binary Cross Entropy, 2 others) 
+4. Gradient Descent (SGD, Mini-batch, Batch) 
+5. Impement Learning Rate Schedule
+6. Train-Test Split/ Cross-Validation 
+7. Implement one hot encoding when using 2 output nodes
+8. Dropout Rate
+9. Graphical Application
+
+Visualisation: 
+1. Evaluate how different activation functions change accuracy 
+2. 
+
 Note: Network now configurable for activations and no. of hidden layers/nodes. Currently using 3 hidden layers. 
 1. input layer -> tanh, 30nodes
 2. hidden 1 -> relu, 7 nodes
