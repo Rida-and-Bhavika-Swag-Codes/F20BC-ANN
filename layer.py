@@ -30,15 +30,20 @@ class Layer:
 
     def propogate_backward(self, loss, learning_rate):
         print("in back prop")
-        
-        ierror = loss * self.weights.T # input error
-        wgrad = np.dot(self.input.T, loss)
-        bgrad = loss * 1
+        print("the loss is", loss)
+        print("the weights of the layer are", self.weights)
+        #ierror = loss * self.weights.T # input error
+        input_error = np.dot(self.weights.T,loss)
+        weights_error = np.dot(loss, self.input.T)
+        #wgrad = np.dot(self.input.T, loss)
+        #bgrad = loss * 1
 
         # updating the parameters
-        self.weights -= learning_rate * wgrad
-        self.bias -= learning_rate * bgrad
-        return self.activation_prime(ierror) * loss
+        self.weights -= learning_rate * weights_error
+        self.bias -= learning_rate * loss
+
+        return input_error
+        #return self.activation_prime(ierror) * loss
 
     """debug function"""
     def get_properties(self):
