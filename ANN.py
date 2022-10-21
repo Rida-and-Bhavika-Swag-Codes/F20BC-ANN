@@ -96,7 +96,11 @@ class ANN:
         for p, y in zip(pred, Y):
             total_loss += self.loss_function(p, y)
             error = self.loss_prime(p, y)
-
+            print("pred", p)
+            print("pred", p.shape)
+            print("y", y)
+            print("error", error)
+            print("error", error.shape)
             for l in reversed(self.layers[:-1]):
                 print("back prop")
                 layer.Layer.propogate_backward(l, error, self.learning_rate)
