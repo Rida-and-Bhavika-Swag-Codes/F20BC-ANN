@@ -30,13 +30,15 @@ class Layer:
 
     def propogate_backward(self, loss, learning_rate):
         print("in back prop")
-        error = self.activation_prime(np.dot(loss, self.weights.T)) * loss
-        wgrad = error * self.activation(self.input.T)
-        bgrad = error * 1
+        
+        ierror = loss * self.weights.T # input error
+        wgrad = np.dot(self.input.T, loss)
+        bgrad = loss * 1
 
         # updating the parameters
-        self.weights += learning_rate * -wgrad
-        self.bias += learning_rate * -bgrad
+        self.weights -= learning_rate * wgrad
+        self.bias -= learning_rate * bgrad
+        return self.activation_prime(ierror) * loss
 
     """debug function"""
     def get_properties(self):
@@ -68,14 +70,14 @@ def sigmoid(wsum): #aka. logistic activation
 
 # derivatives of activation functions
 def dtanh(wsum):
-    tanh = tanh(wsum)
-    return wsum * (1 - np.square(tanh))
+    th = tanh(wsum)
+    return wsum * (1 - np.square(th))
 
 def drelu(wsum):
-    relu = relu(wsum)
-    return np.int64(relu > 0)
+    rel = relu(wsum)
+    return np.int64(rel > 0)
 
 def dsigmoid(wsum):
-    sigmoid = sigmoid(wsum)
-    return sigmoid * (1 - sigmoid)
+    sigm = sigmoid(wsum)
+    return sigm * (1 - sigm)
 

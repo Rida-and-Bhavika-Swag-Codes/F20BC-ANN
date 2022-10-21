@@ -91,13 +91,14 @@ class ANN:
     # stochastic gradient descent 
     def sgd(self, X, Y, nclasses): 
         print("in gd")
+        
         total_loss = 0
         pred = self.layers[-1].input.T
+        
         for p, y in zip(pred, Y):
             total_loss += self.loss_function(p, y)
             error = self.loss_prime(p, y)
-
-            #update weights of all layers except output layer
+            
             for l in reversed(self.layers[:-1]):
                 print("back prop")
                 layer.Layer.propogate_backward(l, error, self.learning_rate)
@@ -125,15 +126,18 @@ def mse(pred, y):
 def dmse(pred, y):
     return 2*(pred-y)/y.shape[0]
 
+
+# adding epsilon to the predicted output to avoid log(0) error
+EPSILON = 1e-7  
+
 def bce(pred, y):
-    # adding epsilon to the predicted output to avoid log(0) error
-    epsilon = 1e-7    
-    return -np.mean(np.multiply(y, np.log(pred + epsilon)) + np.multiply(1 - y , np.log(1 - pred + epsilon)))
+    return -np.mean(np.multiply(y, np.log(pred + EPSILON)) + np.multiply(1 - y , np.log(1 - pred + EPSILON)))
 
 def dbce(pred, y):
-    pass
+    return np.sum(-(y / (pred + EPSILON)), (1 - y)/(1 - pred + EPSILON))
 
 def hingeloss(pred, y):
+    # from https://stats.stackexchange.com/questions/539496/how-to-create-hinge-loss-function-in-python-from-scratch
     npred = np.array([-1 if i == 0 else i for i in pred])
     ny = np.array([-1 if i == 0 else i for i in y])
 
