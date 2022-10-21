@@ -43,7 +43,7 @@ class ANN:
                 self.layers[-1].input = self.layers[-2].output #set activations of the last layer
 
                 # gradient descent
-                print("\nmean loss:", self.sgd(self.input, self.output, 2))
+                print("\nmean loss:", self.sgd(self.input, self.output[sample], 2))
 
     """test ANN
     input: x values given to the model
@@ -97,10 +97,17 @@ class ANN:
         print("in gd")
         
         total_loss = 0
-        print("the calculated outputs are", self.layers[-1].input)
-        print("the actual output is", self.output)
-        pred = self.layers[-1].input.T
         
+        #the predicted outcome
+        pred = self.layers[-1].input.T
+        print(len(self.output))
+        print("the calculated outputs are", pred)
+        error = self.loss_prime(Y, pred)
+        print("the calculated error is", error)
+        for layer in reversed(self.layers[:-1]):
+            error = layer.propogate_backward(error, self.learning_rate)
+
+        """
         for p, y in zip(pred, Y):
             total_loss += self.loss_function(p, y)
             error = self.loss_prime(p, y)
@@ -108,7 +115,7 @@ class ANN:
             for l in reversed(self.layers[:-1]):
                 print("back prop")
                 layer.Layer.propogate_backward(l, error, self.learning_rate)
-
+        """
         return total_loss / len(X)
 
             
