@@ -101,19 +101,17 @@ class ANN:
         #the predicted outcome
         pred = self.layers[-1].input
         print(len(self.output))
-        print("the calculated outputs are", pred)
-        print("the true outputs are", Y)
+
+        
         error = self.loss_prime(Y, pred)
         print("the calculated error is", error)
         #for layer in reversed(self.layers[:-1]):
-        print("THE LAYERS", self.layers)
-        print("THE SLICED LAYERS: ", self.layers[1:-1])
+
         for layer in reversed(self.layers[1:-1]):
             error = layer.propogate_backward(error, self.learning_rate)
         #backpropogate last layer
         
         self.layers[0].input.resize(1,30) 
-        print("new input shape", self.layers[0].input.shape)
         error = self.layers[0].propogate_backward(error, self.learning_rate) 
 
         """

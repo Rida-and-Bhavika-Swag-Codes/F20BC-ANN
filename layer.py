@@ -31,24 +31,17 @@ class Layer:
             return self.output
 
     def propogate_backward(self, loss, learning_rate):
-        print("in back prop")
-        print("the output error is", loss)
-        print("the weights of the layer are", self.weights)
-        print("the input is ", self.input)
-        print("the bias at this layer is", self.bias)
+
         #ierror = loss * self.weights.T # input error
-        
         input_error = np.dot(loss, self.weights.T)
-        print("shape of input", self.input.T.shape)
-        print("shape of loss", loss.shape)
         weights_error = np.dot(self.input.T, loss)
-        
 
         #wgrad = np.dot(self.input.T, loss)
         #bgrad = loss * 1
 
         # updating the parameters
-        self.weights -= learning_rate * weights_error
+        
+        self.weights = self.weights - (learning_rate * weights_error)
         self.bias -= learning_rate * loss
 
         return input_error
