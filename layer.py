@@ -16,8 +16,9 @@ class Layer:
         self.bias = np.random.rand(1,output_connections) - 0.5     
 
     def propogate_forward(self, input):
+        print("the input to forward prop", self.input)
         #set input vector
-        self.input = input
+        self.input = np.array(input)
         # calculate weighted sum
         wsum = np.dot(input,self.weights) + self.bias
         # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
@@ -26,6 +27,7 @@ class Layer:
         # apply activation
         if self.activation: #if self.activation null then this is an output layer and we don't forward propogate from here
             self.output = self.activation(wsum)
+            print("the calculated output", self.output)
             return self.output
 
     def propogate_backward(self, loss, learning_rate):
@@ -37,7 +39,11 @@ class Layer:
         #ierror = loss * self.weights.T # input error
         
         input_error = np.dot(loss, self.weights.T)
+        print("shape of input", self.input.T.shape)
+        print("shape of loss", loss.shape)
         weights_error = np.dot(self.input.T, loss)
+        
+
         #wgrad = np.dot(self.input.T, loss)
         #bgrad = loss * 1
 

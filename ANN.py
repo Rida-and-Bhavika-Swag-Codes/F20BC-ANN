@@ -36,7 +36,7 @@ class ANN:
             print("propogating forward")
             for sample in range (len(self.input[0])):
                 print("the current sample is", sample)
-                layer.Layer.propogate_forward(self.layers[0],self.input[:,sample])
+                layer.Layer.propogate_forward(self.layers[0], self.input[:,sample])
                 for i in range(len(self.layers)-2):
                     print("propogating forward hidden layers")
                     layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
@@ -99,13 +99,22 @@ class ANN:
         total_loss = 0
         
         #the predicted outcome
-        pred = self.layers[-1].input.T
+        pred = self.layers[-1].input
         print(len(self.output))
         print("the calculated outputs are", pred)
+        print("the true outputs are", Y)
         error = self.loss_prime(Y, pred)
         print("the calculated error is", error)
-        for layer in reversed(self.layers[:-1]):
+        #for layer in reversed(self.layers[:-1]):
+        print("THE LAYERS", self.layers)
+        print("THE SLICED LAYERS: ", self.layers[1:-1])
+        for layer in reversed(self.layers[1:-1]):
             error = layer.propogate_backward(error, self.learning_rate)
+        #backpropogate last layer
+        
+        self.layers[0].input.resize(1,30) 
+        print("new input shape", self.layers[0].input.shape)
+        error = self.layers[0].propogate_backward(error, self.learning_rate) 
 
         """
         for p, y in zip(pred, Y):
@@ -137,7 +146,7 @@ def mse(pred, y):
     return np.mean(np.power(y - pred, 2))
 
 def dmse(pred, y):
-    return 2*(pred-y)/y.shape[0]
+    return 2*(pred-y)/y.size
 
 
 # adding epsilon to the predicted output to avoid log(0) error
