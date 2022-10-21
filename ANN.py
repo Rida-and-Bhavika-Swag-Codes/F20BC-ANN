@@ -34,16 +34,15 @@ class ANN:
     def train(self):
         for j in range(self.training_epochs):
             print("propogating forward")
+
             for sample in range (len(self.input[0])):
-                print("the current sample is", sample)
                 layer.Layer.propogate_forward(self.layers[0], self.input[:,sample])
                 for i in range(len(self.layers)-2):
-                    print("propogating forward hidden layers")
                     layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
                 self.layers[-1].input = self.layers[-2].output #set activations of the last layer
 
                 # gradient descent
-                print("\nmean loss:", self.sgd(self.input, self.output[sample], 2))
+                print("mean loss:", self.sgd(self.input, self.output[sample], 2))
 
     """test ANN
     input: x values given to the model
@@ -75,7 +74,6 @@ class ANN:
 
         #append input layer
         l = layer.Layer(len(self.input), 7, activations[0])
-        print("number of input nodes are", l.num_nodes)
         self.layers.append(l)
         print("adding input layer")
 
@@ -100,11 +98,8 @@ class ANN:
         
         #the predicted outcome
         pred = self.layers[-1].input
-        print(len(self.output))
-
         
         error = self.loss_prime(Y, pred)
-        print("the calculated error is", error)
         #for layer in reversed(self.layers[:-1]):
 
         for layer in reversed(self.layers[1:-1]):
