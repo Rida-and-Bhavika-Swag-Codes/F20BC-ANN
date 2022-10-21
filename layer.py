@@ -32,6 +32,7 @@ class Layer:
         print("in back prop")
         print("the loss is", loss)
         print("the weights of the layer are", self.weights)
+        print("the input is ", self.input)
         #ierror = loss * self.weights.T # input error
         input_error = np.dot(self.weights.T,loss)
         weights_error = np.dot(loss, self.input.T)

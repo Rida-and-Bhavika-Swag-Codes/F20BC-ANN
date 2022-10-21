@@ -11,7 +11,7 @@ class ANN:
 
     """
     def __init__(self, learn_rate, loss, input, output):
-        self.input = input  #input vector 
+        self.input = input.to_numpy()  #input vector 
         self.layers = [] #assume 7 nodes in the next hidden layer
         self.output = output #Target class
 
@@ -36,12 +36,12 @@ class ANN:
             print("propogating forward")
             for sample in range (len(self.input[0])):
                 print("the current sample is", sample)
-                print(self.input.type)
                 layer.Layer.propogate_forward(self.layers[0],self.input[:,sample])
                 for i in range(len(self.layers)-2):
                     print("propogating forward hidden layers")
                     layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
                 self.layers[-1].input = self.layers[-2].output #set activations of the last layer
+
                 # gradient descent
                 print("\nmean loss:", self.sgd(self.input, self.output, 2))
 
@@ -74,7 +74,8 @@ class ANN:
         print("number of hidden layers", len(nodes_per_layer)-1, "\n")
 
         #append input layer
-        l = layer.Layer(len(self.input[0]), 7, activations[0])
+        l = layer.Layer(len(self.input), 7, activations[0])
+        print("number of input nodes are", l.num_nodes)
         self.layers.append(l)
         print("adding input layer")
 
@@ -89,12 +90,15 @@ class ANN:
     
 
 
+
     """ gradient descent functions """
     # stochastic gradient descent 
     def sgd(self, X, Y, nclasses): 
         print("in gd")
         
         total_loss = 0
+        print("the calculated outputs are", self.layers[-1].input)
+        print("the actual output is", self.output)
         pred = self.layers[-1].input.T
         
         for p, y in zip(pred, Y):
