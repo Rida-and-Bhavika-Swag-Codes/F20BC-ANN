@@ -12,14 +12,14 @@ class Layer:
 
         #number of rows in weight matrix = number of nodes in the layer
         #number of colums = number of nodes in the next layer/number of output connections
-        self.weights = np.random.rand(output_connections, self.num_nodes) - 0.5
-        self.bias = np.random.rand(output_connections, 1) - 0.5     
+        self.weights = np.random.rand(self.num_nodes,output_connections) - 0.5
+        self.bias = np.random.rand(1,output_connections) - 0.5     
 
     def propogate_forward(self, input):
         #set input vector
         self.input = input
         # calculate weighted sum
-        wsum = np.dot(self.weights, input) + self.bias
+        wsum = np.dot(input,self.weights) + self.bias
         # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
         wsum = np.array(wsum, dtype = np.float32)
         
@@ -30,12 +30,14 @@ class Layer:
 
     def propogate_backward(self, loss, learning_rate):
         print("in back prop")
-        print("the loss is", loss)
+        print("the output error is", loss)
         print("the weights of the layer are", self.weights)
         print("the input is ", self.input)
+        print("the bias at this layer is", self.bias)
         #ierror = loss * self.weights.T # input error
-        input_error = np.dot(self.weights.T,loss)
-        weights_error = np.dot(loss, self.input.T)
+        
+        input_error = np.dot(loss, self.weights.T)
+        weights_error = np.dot(self.input.T, loss)
         #wgrad = np.dot(self.input.T, loss)
         #bgrad = loss * 1
 
