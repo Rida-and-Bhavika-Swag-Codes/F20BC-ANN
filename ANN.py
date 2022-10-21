@@ -11,7 +11,7 @@ class ANN:
 
     """
     def __init__(self, learn_rate, loss, input, output):
-        self.input = input  #input vector 
+        self.input = input.to_numpy()  #input vector 
         self.layers = [] #assume 7 nodes in the next hidden layer
         self.output = output #Target class
 
@@ -34,13 +34,15 @@ class ANN:
     def train(self):
         for j in range(self.training_epochs):
             print("propogating forward")
-            layer.Layer.propogate_forward(self.layers[0],self.layers[0].input)
-            for i in range(len(self.layers)-2):
-                print("propogating forward")
-                layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
-            self.layers[-1].input = self.layers[-2].output #set activations of the last layer
-            # gradient descent
-            print("\nmean loss:", self.sgd(self.input, self.output, 2))
+
+            for sample in range (len(self.input[0])):
+                layer.Layer.propogate_forward(self.layers[0], self.input[:,sample])
+                for i in range(len(self.layers)-2):
+                    layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
+                self.layers[-1].input = self.layers[-2].output #set activations of the last layer
+
+                # gradient descent
+                print("mean loss:", self.sgd(self.input, self.output[sample], 2))
 
     """test ANN
     input: x values given to the model
@@ -71,8 +73,7 @@ class ANN:
         print("number of hidden layers", len(nodes_per_layer)-1, "\n")
 
         #append input layer
-        l = layer.Layer(len(self.input[0]), 7, activations[0])
-        l.input = self.input
+        l = layer.Layer(len(self.input), 7, activations[0])
         self.layers.append(l)
         print("adding input layer")
 
@@ -87,14 +88,28 @@ class ANN:
     
 
 
+
     """ gradient descent functions """
     # stochastic gradient descent 
     def sgd(self, X, Y, nclasses): 
         print("in gd")
         
         total_loss = 0
-        pred = self.layers[-1].input.T
         
+        #the predicted outcome
+        pred = self.layers[-1].input
+        
+        error = self.loss_prime(Y, pred)
+        #for layer in reversed(self.layers[:-1]):
+
+        for layer in reversed(self.layers[1:-1]):
+            error = layer.propogate_backward(error, self.learning_rate)
+        #backpropogate last layer
+        
+        self.layers[0].input.resize(1,30) 
+        error = self.layers[0].propogate_backward(error, self.learning_rate) 
+
+        """
         for p, y in zip(pred, Y):
             total_loss += self.loss_function(p, y)
             error = self.loss_prime(p, y)
@@ -102,7 +117,7 @@ class ANN:
             for l in reversed(self.layers[:-1]):
                 print("back prop")
                 layer.Layer.propogate_backward(l, error, self.learning_rate)
-
+        """
         return total_loss / len(X)
 
             
@@ -124,7 +139,7 @@ def mse(pred, y):
     return np.mean(np.power(y - pred, 2))
 
 def dmse(pred, y):
-    return 2*(pred-y)/y.shape[0]
+    return 2*(pred-y)/y.size
 
 
 # adding epsilon to the predicted output to avoid log(0) error

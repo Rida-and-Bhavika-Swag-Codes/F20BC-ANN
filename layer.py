@@ -12,14 +12,17 @@ class Layer:
 
         #number of rows in weight matrix = number of nodes in the layer
         #number of colums = number of nodes in the next layer/number of output connections
-        self.weights = np.random.rand(output_connections, self.num_nodes) - 0.5
-        self.bias = np.random.rand(output_connections, 1) - 0.5     
+        self.weights = np.random.rand(self.num_nodes,output_connections) - 0.5
+        self.bias = np.random.rand(1,output_connections) - 0.5     
 
     def propogate_forward(self, input):
         #set input vector
-        self.input = input
+        self.input = np.array(input)
+        print("the input is ", input)
+        print("the weights are ", self.weights)
+
         # calculate weighted sum
-        wsum = np.dot(self.weights, input) + self.bias
+        wsum = np.dot(input,self.weights) + self.bias
         # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
         wsum = np.array(wsum, dtype = np.float32)
         
@@ -29,16 +32,21 @@ class Layer:
             return self.output
 
     def propogate_backward(self, loss, learning_rate):
-        print("in back prop")
-        
-        ierror = loss * self.weights.T # input error
-        wgrad = np.dot(self.input.T, loss)
-        bgrad = loss * 1
+
+        #ierror = loss * self.weights.T # input error
+        input_error = np.dot(loss, self.weights.T)
+        weights_error = np.dot(self.input.T, loss)
+
+        #wgrad = np.dot(self.input.T, loss)
+        #bgrad = loss * 1
 
         # updating the parameters
-        self.weights -= learning_rate * wgrad
-        self.bias -= learning_rate * bgrad
-        return self.activation_prime(ierror) * loss
+        
+        self.weights = self.weights - (learning_rate * weights_error)
+        self.bias -= learning_rate * loss
+
+        return input_error
+        #return self.activation_prime(ierror) * loss
 
     """debug function"""
     def get_properties(self):
