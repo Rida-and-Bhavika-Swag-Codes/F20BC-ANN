@@ -30,11 +30,7 @@ class Layer:
 
     def propogate_backward(self, loss, learning_rate):
         print("in back prop")
-
-        print("output error", loss.shape)
-        print("input", self.input.shape)
-        print("weights", self.weights.shape)
-
+        
         ierror = loss * self.weights.T # input error
         wgrad = np.dot(self.input.T, loss)
         bgrad = loss * 1
