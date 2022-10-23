@@ -32,6 +32,7 @@ class ANN:
 
     """train ANN"""
     def train(self):
+        total_loss = 0
         for j in range(self.training_epochs):
             print("propogating forward")
 
@@ -42,7 +43,11 @@ class ANN:
                 self.layers[-1].input = self.layers[-2].output #set activations of the last layer
 
                 # gradient descent
-                print("mean loss:", self.sgd(self.input, self.output[sample], 2))
+                print("input:", self.input)
+                loss = self.sgd(self.input, self.output[sample])
+                total_loss += loss
+                print("loss:", loss)
+        print("mean loss", total_loss/(j+1)) # please check if this is correct
 
     """test ANN
     input: x values given to the model
@@ -91,34 +96,23 @@ class ANN:
 
     """ gradient descent functions """
     # stochastic gradient descent 
-    def sgd(self, X, Y, nclasses): 
+    def sgd(self, X, Y): 
         print("in gd")
         
-        total_loss = 0
-        
-        #the predicted outcome
+        # the predicted outcome
         pred = self.layers[-1].input
-        
-        error = self.loss_prime(Y, pred)
-        #for layer in reversed(self.layers[:-1]):
+
+        loss = self.loss_function(pred, Y)
+        error = self.loss_prime(pred, Y)
 
         for layer in reversed(self.layers[1:-1]):
             error = layer.propogate_backward(error, self.learning_rate)
-        #backpropogate last layer
         
+        # backpropogate last layer
         self.layers[0].input.resize(1,30) 
-        error = self.layers[0].propogate_backward(error, self.learning_rate) 
+        self.layers[0].propogate_backward(error, self.learning_rate, False) 
 
-        """
-        for p, y in zip(pred, Y):
-            total_loss += self.loss_function(p, y)
-            error = self.loss_prime(p, y)
-            
-            for l in reversed(self.layers[:-1]):
-                print("back prop")
-                layer.Layer.propogate_backward(l, error, self.learning_rate)
-        """
-        return total_loss / len(X)
+        return loss/len(X)
 
             
 
