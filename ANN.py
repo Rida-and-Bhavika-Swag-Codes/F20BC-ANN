@@ -20,11 +20,11 @@ class ANN:
         
         self.loss_function = None
         self.loss_prime = None
-        # 1 = mse, 2 = bce, 3 = hinge
+        # 1 = bce, 2 = mse, 3 = mae
         match loss:
-            case 1 : self.loss_function, self.loss_prime = mse, dmse
-            case 2 : self.loss_function, self.loss_prime = bce, dbce
-            case 3 : self.loss_function, self.loss_prime = hingeloss, dhingeloss
+            case 1 : self.loss_function, self.loss_prime = bce, dbce
+            case 2 : self.loss_function, self.loss_prime = mse, dmse
+            case 3 : self.loss_function, self.loss_prime = mae, dmae
             case other: print("no loss function selected")
          
         #self.GD_type = None
@@ -129,28 +129,23 @@ Parameters:
 pred - ** predicted ** output of the ANN
 y - true value
 """
+# adding epsilon to the predicted output to avoid log(0) error and for stability
+EPSILON = 1e-7  
+
+def bce(pred, y):
+    return -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON))
+
+def dbce(pred, y):
+    return -(y / (pred + EPSILON)) * ((1 - y)/(1 - pred + EPSILON))
+
 def mse(pred, y):
     return np.mean(np.power(y - pred, 2))
 
 def dmse(pred, y):
     return 2*(pred-y)/y.size
 
+def mae(pred, y):
+    return np.mean(abs(y - pred))
 
-# adding epsilon to the predicted output to avoid log(0) error
-EPSILON = 1e-7  
-
-def bce(pred, y):
-    return -np.mean(np.multiply(y, np.log(pred + EPSILON)) + np.multiply(1 - y , np.log(1 - pred + EPSILON)))
-
-def dbce(pred, y):
-    return np.sum(-(y / (pred + EPSILON)), (1 - y)/(1 - pred + EPSILON))
-
-def hingeloss(pred, y):
-    # from https://stats.stackexchange.com/questions/539496/how-to-create-hinge-loss-function-in-python-from-scratch
-    npred = np.array([-1 if i == 0 else i for i in pred])
-    ny = np.array([-1 if i == 0 else i for i in y])
-
-    return np.mean([max(0, 1 - actual * predicted) for actual, predicted in zip(ny, npred)])
-
-def dhingeloss(pred, y):
-    pass
+def dmae(pred, y):
+    return -((y - pred) / (abs(y - pred) + EPSILON))/y.size
