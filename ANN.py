@@ -119,7 +119,7 @@ class ANN:
     # batch gradient descent
     
     def bgd(self, y):
-
+        
         pred = self.layers[-1].input
         loss = self.loss_function(pred, y) 
         error = self.loss_prime(pred, y)
@@ -167,7 +167,7 @@ def bce(pred, y):
     return -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON))
 
 def dbce(pred, y):
-    return -(y / (pred + EPSILON)) * ((1 - y)/(1 - pred + EPSILON))
+    return -(y / (pred + EPSILON)) + ((1 - y)/(1 - pred + EPSILON))
 
 def mse(pred, y):
     return np.mean(np.power(y - pred, 2))
