@@ -32,22 +32,23 @@ class ANN:
 
     """train ANN"""
     def train(self):
-        total_loss = 0
+        #total_loss = 0
         for j in range(self.training_epochs):
             print("propogating forward")
-            loss_epoch = 0
+            #loss_epoch = 0
             for sample in range (len(self.input[0])):
                 layer.Layer.propogate_forward(self.layers[0], self.input[:,sample])
                 for i in range(len(self.layers)-2):
                     layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
                 self.layers[-1].input = self.layers[-2].output #set activations of the last layer
-
+                """
                 print("input:", self.input)
                 loss = self.sgd(self.output[sample]) 
                 loss_epoch += loss
                 print("loss:", loss)
             total_loss += loss_epoch/len(self.input[0])
         print("mean loss:", total_loss/(j+1)) # please check if this is correct 
+        """
 
     """test ANN
     input: x values given to the model
@@ -88,7 +89,7 @@ class ANN:
             print("added 1 hidden layer")
 
         #append output layer
-        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0))#output layer has no output connections or activation function
+        self.layers.append(layer.Layer(nodes_per_layer[-1], nodes_per_layer[-1], activations[-1] ))#output layer has no output connections or activation function
         print("added 1 output layer")
     
 
@@ -117,7 +118,6 @@ class ANN:
         return loss
 
     # batch gradient descent
-    
     def bgd(self, y):
         
         pred = self.layers[-1].input
