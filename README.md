@@ -5,7 +5,7 @@ Coursework 1
 Coding: 
 1. Class Architecture -done
 2. Forward Propogation (Logistic, Relu, Hyperbolic Tangent) -done
-3. Backward Propogation (Binary Cross Entropy, 2 others) -bhavika
+3. Backward Propogation (Binary Cross Entropy, 2 others) -done
 4. Gradient Descent (SGD, Mini-batch, Batch) - bhavika
 5. Impement Learning Rate Schedule
 6. Train-Test Split/ Cross-Validation - rida
