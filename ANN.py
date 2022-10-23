@@ -38,10 +38,11 @@ class ANN:
             #loss_epoch = 0
             for sample in range (len(self.input[0])):
                 layer.Layer.propogate_forward(self.layers[0], self.input[:,sample])
-                for i in range(len(self.layers)-2):
+                for i in range(len(self.layers)-1):
                     layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
-                self.layers[-1].input = self.layers[-2].output #set activations of the last layer
                 """
+                self.layers[-1].input = self.layers[-2].output #set activations of the last layer
+                
                 print("input:", self.input)
                 loss = self.sgd(self.output[sample]) 
                 loss_epoch += loss
