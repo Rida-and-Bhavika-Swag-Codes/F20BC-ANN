@@ -47,7 +47,7 @@ class ANN:
                 loss = self.sgd(self.input, self.output[sample])
                 total_loss += loss
                 print("loss:", loss)
-        print("mean loss", total_loss/(j+1)) # please check if this is correct
+        print("mean loss:", total_loss/(j+1)) # please check if this is correct
 
     """test ANN
     input: x values given to the model
@@ -122,21 +122,23 @@ def one_hot_encode(y, nclasses):
     y_onehot[np.arange(y.shape[0]), y] = 1
     return y_onehot
 
+""" mini batches creation """
+def mini_batches(X, Y, bsize):
+    pass
+
 
 # loss functions
 """
 Parameters: 
 pred - ** predicted ** output of the ANN
 y - true value
-"""
-# adding epsilon to the predicted output to avoid log(0) error and for stability
-EPSILON = 1e-7  
+""" 
 
 def bce(pred, y):
-    return -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON))
+    return -np.mean((y * np.nan_to_num(np.log(pred))) + (1 - y) * np.nan_to_num(np.log(1 - pred)))
 
 def dbce(pred, y):
-    return -(y / (pred + EPSILON)) * ((1 - y)/(1 - pred + EPSILON))
+    return -(y / (pred)) * ((1 - y)/(1 - pred))
 
 def mse(pred, y):
     return np.mean(np.power(y - pred, 2))
@@ -148,4 +150,5 @@ def mae(pred, y):
     return np.mean(abs(y - pred))
 
 def dmae(pred, y):
-    return -((y - pred) / (abs(y - pred) + EPSILON))/y.size
+    print("y size:", y.size)
+    return -(np.nan_to_num(((y - pred) / (abs(y - pred)))))/y.size
