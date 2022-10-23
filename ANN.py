@@ -35,19 +35,19 @@ class ANN:
         total_loss = 0
         for j in range(self.training_epochs):
             print("propogating forward")
-
+            loss_epoch = 0
             for sample in range (len(self.input[0])):
                 layer.Layer.propogate_forward(self.layers[0], self.input[:,sample])
                 for i in range(len(self.layers)-2):
                     layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
                 self.layers[-1].input = self.layers[-2].output #set activations of the last layer
 
-                # gradient descent
                 print("input:", self.input)
-                loss = self.sgd(self.input, self.output[sample])
-                total_loss += loss
+                loss = self.sgd(self.output[sample]) 
+                loss_epoch += loss
                 print("loss:", loss)
-        print("mean loss:", total_loss/(j+1)) # please check if this is correct
+            total_loss += loss_epoch/len(self.input[0])
+        print("mean loss:", total_loss/(j+1)) # please check if this is correct 
 
     """test ANN
     input: x values given to the model
@@ -96,25 +96,44 @@ class ANN:
 
     """ gradient descent functions """
     # stochastic gradient descent 
-    def sgd(self, X, Y): 
+    def sgd(self, y): 
         print("in gd")
         
         # the predicted outcome
         pred = self.layers[-1].input
 
-        loss = self.loss_function(pred, Y)
-        error = self.loss_prime(pred, Y)
+        loss = self.loss_function(pred, y)
+        error = self.loss_prime(pred, y)
 
-        for layer in reversed(self.layers[1:-1]):
-            error = layer.propogate_backward(error, self.learning_rate)
-        
+        for l in reversed(self.layers[1:-1]):
+            error, wgrad, bgrad = l.propogate_backward(error)
+            l.update_parameters(wgrad, bgrad, self.learning_rate)
+
         # backpropogate last layer
         self.layers[0].input.resize(1,30) 
-        self.layers[0].propogate_backward(error, self.learning_rate, False) 
+        error, wgrad, bgrad = self.layers[0].propogate_backward(error, False) 
+        self.layers[0].update_parameters(wgrad, bgrad, self.learning_rate)
 
-        return loss/len(X)
+        return loss
 
-            
+    # batch gradient descent
+    
+    def bgd(self, y):
+
+        pred = self.layers[-1].input
+        loss = self.loss_function(pred, y) 
+        error = self.loss_prime(pred, y)
+    
+        for l in reversed(self.layers[1:-1]):
+            error, wgrad, bgrad = l.propogate_backward(error)
+
+        # backpropogate last layer
+        self.layers[0].input.resize(1,30)
+        error, wgrad, bgrad = self.layers[0].propogate_backward(error, False) 
+        for i in range(len(self.layers)):
+            layer.Layer.update_parameters(self.layers[i], wgrad, bgrad, self.learning_rate)
+
+        return loss
 
 """ using one_hot_encode as this is binary classification """
 def one_hot_encode(y, nclasses):
@@ -123,9 +142,16 @@ def one_hot_encode(y, nclasses):
     return y_onehot
 
 """ mini batches creation """
-def mini_batches(X, Y, bsize):
-    pass
-
+def mini_batches(x, y, bsize):
+    # assert x.size == y.size
+    mbatches = []
+    data = np.arange(x.size)
+    np.random.shuffle(data)
+    for i in range(0, x.size, bsize):
+        last = min(i + bsize, x.size)
+        batch = data[i:last]
+        mbatches.append((x[batch], y[batch]))
+    return mbatches
 
 # loss functions
 """
@@ -134,11 +160,14 @@ pred - ** predicted ** output of the ANN
 y - true value
 """ 
 
+# adding epsilon to the predicted output to avoid log(0) error and for stability
+EPSILON = 1e-7  
+
 def bce(pred, y):
-    return -np.mean((y * np.nan_to_num(np.log(pred))) + (1 - y) * np.nan_to_num(np.log(1 - pred)))
+    return -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON))
 
 def dbce(pred, y):
-    return -(y / (pred)) * ((1 - y)/(1 - pred))
+    return -(y / (pred + EPSILON)) * ((1 - y)/(1 - pred + EPSILON))
 
 def mse(pred, y):
     return np.mean(np.power(y - pred, 2))
@@ -150,5 +179,4 @@ def mae(pred, y):
     return np.mean(abs(y - pred))
 
 def dmae(pred, y):
-    print("y size:", y.size)
-    return -(np.nan_to_num(((y - pred) / (abs(y - pred)))))/y.size
+    return -((y - pred) / (abs(y - pred) + EPSILON))/y.size

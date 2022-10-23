@@ -31,20 +31,22 @@ class Layer:
             self.output = self.activation(wsum)
             return self.output
 
-    def propogate_backward(self, loss, learning_rate, activate = True):
-
+    def propogate_backward(self, loss, activate = True):
         input_error = np.dot(loss, self.weights.T)
         wgrad = np.dot(self.input.T, loss)
         bgrad = loss * 1
 
+        if self.activation_prime and activate:
+            return self.activation_prime(input_error), wgrad, bgrad
+        else:
+            return None, wgrad, bgrad
+
+    def update_parameters(self, wgrad, bgrad, learning_rate):
         # updating the parameters
-        
+        print(self.weights)
         self.weights = self.weights - (learning_rate * wgrad)
         self.bias = self.bias - (learning_rate * bgrad)
-
-        if self.activation_prime and activate:
-            return self.activation_prime(input_error)
-
+    
     """debug function"""
     def get_properties(self):
         print("Number of nodes:", self.num_nodes)
