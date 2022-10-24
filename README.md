@@ -13,8 +13,8 @@ Coding:
 8. Dropout Rate - rida
 9. Graphical Application
 10.Do normalization of the training data
-11.Shuffle training data
-12. 
+11.Shuffle training data -done
+12. Find network metrics
 
 Visualisation: 
 1. Evaluate how different activation functions change accuracy 
