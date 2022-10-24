@@ -11,7 +11,7 @@ class ANN:
 
     """
     def __init__(self, learn_rate, loss, input, output):
-        self.input = input.to_numpy()  #input vector 
+        self.input = input #input vector 
         self.layers = [] #assume 7 nodes in the next hidden layer
         self.output = output #Target class
 
