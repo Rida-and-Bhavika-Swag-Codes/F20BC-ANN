@@ -8,13 +8,14 @@ Coding:
 3. Backward Propogation (Binary Cross Entropy, 2 others) -done
 4. Gradient Descent (SGD, Mini-batch, Batch) - bhavika
 5. Impement Learning Rate Schedule
-6. Train-Test Split/ Cross-Validation - rida
-7. Implement one hot encoding when using 2 output nodes 
-8. Dropout Rate - rida
-9. Graphical Application
-10.Do normalization of the training data
-11.Shuffle training data -done
-12. Find network metrics
+6. Train-Test Split - done
+7. Cross-Validation
+8. Implement one hot encoding when using 2 output nodes 
+9. Dropout Rate - rida
+10. Graphical Application
+11.Do normalization of the training data
+12.Shuffle training data -done
+13. Find network metrics
 
 Visualisation: 
 1. Evaluate how different activation functions change accuracy 
