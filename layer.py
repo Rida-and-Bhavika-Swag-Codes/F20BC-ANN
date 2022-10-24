@@ -2,34 +2,35 @@ import numpy as np
 
 class Layer:
 
-    def __init__(self, nodes, output_connections, activation):
+    def __init__(self, nodes, output_connecstions, activation):
         self.input = None #input vector
         self.output = None #output vector
         self.num_nodes = nodes
-
+        self.wsum = None
         #switch case for activations here?
         self.activation, self.activation_prime = self.setActivation(activation)
 
         #number of rows in weight matrix = number of nodes in the layer
         #number of colums = number of nodes in the next layer/number of output connections
-        self.weights = np.random.rand(self.num_nodes,output_connections) - 0.5
-        self.bias = np.random.rand(1,output_connections) - 0.5     
+        self.weights = np.random.rand(output_connections, self.num_nodes) - 0.5
+        self.bias = np.random.rand(output_connections, 1) - 0.5     
 
     def propogate_forward(self, input):
         #set input vector
-        self.input = np.array(input)
+        self.input = input
         #print("the input is ", input)
         #print("the weights are ", self.weights)
 
         # calculate weighted sum
-        wsum = np.dot(input,self.weights) + self.bias
+        self.wsum = np.dot(self.weights, input) + self.bias
         # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
-        wsum = np.array(wsum, dtype = np.float32)
+        #wsum = np.array(wsum, dtype = np.float32)
         
         # apply activation
         if self.activation: #if self.activation null then this is an output layer and we don't forward propogate from here
             self.output = self.activation(wsum)
             return self.output
+
 
     def propogate_backward(self, loss, activate = True):
         input_error = np.dot(loss, self.weights.T)

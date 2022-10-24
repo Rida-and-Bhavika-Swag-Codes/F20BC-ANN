@@ -41,7 +41,8 @@ class ANN:
                 #print("the current sample being propogated forward is", self.input[:,sample])
                 for i in range(len(self.layers)-1):
                     layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
-                self.sgd(self.output[sample])
+                #self.sgd(self.output[sample])
+                self.new_sgd()
                 """
                 self.layers[-1].input = self.layers[-2].output #set activations of the last layer
                 
@@ -102,6 +103,45 @@ class ANN:
         print("added 1 output layer")
     
 
+
+    def new_sgd(self):
+        # the predicted outcome
+        pred = self.layers[-1].output
+        # find the loss
+        loss = self.loss_function(pred, self.output)
+        # call back prop 
+        self.new_propogate_back(len(self.input), loss)
+        
+
+    def new_propogate_back(self, samples, loss):
+        # weights gradient
+        wgrad = []
+        # bias gradient 
+        bgrad = []
+
+        #back prop last layer
+        wgrad.append((1/samples) * np.dot(loss, self.layers[-1].input.T))
+        bgrad.append((1/samples) * np.sum(loss, self.layers[-1].num_nodes))
+
+        #back prop the rest of the layers
+        for i in range(-2, len(self.layers), -1): #-1 from len?
+            prev_l = self.layers[i+1]
+            #undo the weights and activation from the last layer. Calculate loss of this layer
+            loss = prev_l.weights.T * loss * prev_l.activation_prime(self.layers[i].wsum)
+            wgrad.append((1/samples) * np.dot(loss, self.layers[i].input.T))
+            bgrad.append((1/samples) * np.sum(loss, 2))
+
+        #update params
+        for i, j in (range(len(self.layers)), range(-1, len(self.layers), -1)): 
+            self.layers[i].weights -= wgrad[j]
+            self.layers[i].bias -= bgrad[j]
+
+
+    def new_bgd(self):
+        pass
+
+    def new_minibgd(self, bsize):
+        pass
 
 
     """ gradient descent functions """
