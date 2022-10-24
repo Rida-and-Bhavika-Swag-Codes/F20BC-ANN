@@ -116,42 +116,11 @@ class ANN:
 
         return loss
 
-    # batch gradient descent
-    
-    def bgd(self, y):
-        
-        pred = self.layers[-1].input
-        loss = self.loss_function(pred, y) 
-        error = self.loss_prime(pred, y)
-    
-        for l in reversed(self.layers[1:-1]):
-            error, wgrad, bgrad = l.propogate_backward(error)
-
-        # backpropogate last layer
-        self.layers[0].input.resize(1,30)
-        error, wgrad, bgrad = self.layers[0].propogate_backward(error, False) 
-        for i in range(len(self.layers)):
-            layer.Layer.update_parameters(self.layers[i], wgrad, bgrad, self.learning_rate)
-
-        return loss
-
 """ using one_hot_encode as this is binary classification """
 def one_hot_encode(y, nclasses):
     y_onehot = np.zeros((y.shape[0], nclasses))
     y_onehot[np.arange(y.shape[0]), y] = 1
     return y_onehot
-
-""" mini batches creation """
-def mini_batches(x, y, bsize):
-    # assert x.size == y.size
-    mbatches = []
-    data = np.arange(x.size)
-    np.random.shuffle(data)
-    for i in range(0, x.size, bsize):
-        last = min(i + bsize, x.size)
-        batch = data[i:last]
-        mbatches.append((x[batch], y[batch]))
-    return mbatches
 
 # loss functions
 """
