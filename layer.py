@@ -18,8 +18,8 @@ class Layer:
     def propogate_forward(self, input):
         #set input vector
         self.input = np.array(input)
-        print("the input is ", input)
-        print("the weights are ", self.weights)
+        #print("the input is ", input)
+        #print("the weights are ", self.weights)
 
         # calculate weighted sum
         wsum = np.dot(input,self.weights) + self.bias
@@ -43,7 +43,7 @@ class Layer:
 
     def update_parameters(self, wgrad, bgrad, learning_rate):
         # updating the parameters
-        print(self.weights)
+        #print(self.weights)
         self.weights = self.weights - (learning_rate * wgrad)
         self.bias = self.bias - (learning_rate * bgrad)
     

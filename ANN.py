@@ -16,7 +16,7 @@ class ANN:
         self.output = output #Target class
 
         self.learning_rate = learn_rate
-        self.training_epochs = 2
+        self.training_epochs = 100
         
         self.loss_function = None
         self.loss_prime = None
@@ -36,10 +36,12 @@ class ANN:
         for j in range(self.training_epochs):
             print("propogating forward")
             #loss_epoch = 0
-            for sample in range (len(self.input[0])):
+            for sample in range (len(self.input[0])): #currently set to for every sample
                 layer.Layer.propogate_forward(self.layers[0], self.input[:,sample])
+                #print("the current sample being propogated forward is", self.input[:,sample])
                 for i in range(len(self.layers)-1):
                     layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
+                self.sgd(self.output[sample])
                 """
                 self.layers[-1].input = self.layers[-2].output #set activations of the last layer
                 
@@ -55,15 +57,21 @@ class ANN:
     input: x values given to the model
     returns the predicted labels for input"""
     def test(self, input):
+       
          # predict output for given input
         predictions = []
-        input = input.T
+        print("test input ", input)
+        #print("the test input is", input)
         #forward propogate over all samples of the given input
-        for j in range(len(self.input)):
-            layer.Layer.propogate_forward(self.layers[0],input)
+        
+        for j in range(max(1, len(input))):
+           
+            #pass the sample to the the first layer
+            layer.Layer.propogate_forward(self.layers[0],input) 
             for i in range(len(self.layers) - 1):
+                #forward prop all other layers
                 layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
-            predictions.append(self.layers[-1].input)
+            predictions.append(self.layers[-1].output)
         return predictions
 
     """
@@ -99,19 +107,19 @@ class ANN:
     """ gradient descent functions """
     # stochastic gradient descent 
     def sgd(self, y): 
-        print("in gd")
+        #print("in gd")
         
         # the predicted outcome
-        pred = self.layers[-1].input
+        pred = self.layers[-1].output
 
         loss = self.loss_function(pred, y)
         error = self.loss_prime(pred, y)
 
-        for l in reversed(self.layers[1:-1]):
+        for l in reversed(self.layers[1:]): #backpropogate every layer except input layer
             error, wgrad, bgrad = l.propogate_backward(error)
             l.update_parameters(wgrad, bgrad, self.learning_rate)
 
-        # backpropogate last layer
+        # backpropogate input layer
         self.layers[0].input.resize(1,30) 
         error, wgrad, bgrad = self.layers[0].propogate_backward(error, False) 
         self.layers[0].update_parameters(wgrad, bgrad, self.learning_rate)
