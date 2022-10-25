@@ -36,20 +36,19 @@ class ANN:
         for j in range(self.training_epochs):
             print("propogating forward")
             #loss_epoch = 0
-            for sample in range (len(self.input[0])): #currently set to for every sample
-                layer.Layer.propogate_forward(self.layers[0], self.input[:,sample])
-                #print("the current sample being propogated forward is", self.input[:,sample])
-                for i in range(len(self.layers)-1):
-                    layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
-                #self.sgd(self.output[sample])
-                self.new_sgd()
-                """
-                self.layers[-1].input = self.layers[-2].output #set activations of the last layer
-                
-                print("input:", self.input)
-                loss = self.sgd(self.output[sample]) 
-                loss_epoch += loss
-                print("loss:", loss)
+            layer.Layer.propogate_forward(self.layers[0], self.input)
+            #print("the current sample being propogated forward is", self.input[:,sample])
+            for i in range(len(self.layers)-1):
+                layer.Layer.propogate_forward(self.layers[i+1], self.layers[i].output)
+            #self.sgd(self.output[sample])
+            self.new_sgd()
+            """
+            self.layers[-1].input = self.layers[-2].output #set activations of the last layer
+            
+            print("input:", self.input)
+            loss = self.sgd(self.output[sample]) 
+            loss_epoch += loss
+            print("loss:", loss)
             total_loss += loss_epoch/len(self.input[0])
         print("mean loss:", total_loss/(j+1)) # please check if this is correct 
         """
@@ -87,7 +86,8 @@ class ANN:
         print("the activations are", activations)
         print("the variable argument is ", nodes_per_layer)
         print("number of hidden layers", len(nodes_per_layer)-1, "\n")
-
+        print("input to the network is", self.input)
+        print("the output is", self.output)
         #append input layer
         l = layer.Layer(len(self.input), 7, activations[0])
         self.layers.append(l)
@@ -108,7 +108,10 @@ class ANN:
         # the predicted outcome
         pred = self.layers[-1].output
         # find the loss
-        loss = self.loss_function(pred, self.output)
+        print("PRED!", pred)
+        print("OUTPUT!", self.output)
+        #loss = self.loss_function(pred, self.output)
+        loss = self.layers[-1].output - self.output
         # call back prop 
         self.new_propogate_back(len(self.input), loss)
         
@@ -128,8 +131,8 @@ class ANN:
             prev_l = self.layers[i+1]
             #undo the weights and activation from the last layer. Calculate loss of this layer
             loss = prev_l.weights.T * loss * prev_l.activation_prime(self.layers[i].wsum)
-            wgrad.append((1/samples) * np.dot(loss, self.layers[i].input.T))
-            bgrad.append((1/samples) * np.sum(loss, 2))
+            wgrad.append(1/samples * np.dot(loss, self.layers[i].input.T))
+            bgrad.append(1/samples * np.sum(loss, 2))
 
         #update params
         for i, j in (range(len(self.layers)), range(-1, len(self.layers), -1)): 
@@ -186,8 +189,8 @@ class ANN:
 
 """ using one_hot_encode as this is binary classification """
 def one_hot_encode(y, nclasses):
-    y_onehot = np.zeros((y.shape[0], nclasses))
-    y_onehot[np.arange(y.shape[0]), y] = 1
+    y_onehot = np.zeros((y.size, nclasses))
+    y_onehot[np.arange(y.size), y] = 1
     return y_onehot
 
 """ mini batches creation """

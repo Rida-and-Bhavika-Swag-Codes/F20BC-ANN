@@ -2,7 +2,7 @@ import numpy as np
 
 class Layer:
 
-    def __init__(self, nodes, output_connecstions, activation):
+    def __init__(self, nodes, output_connections, activation):
         self.input = None #input vector
         self.output = None #output vector
         self.num_nodes = nodes
@@ -16,19 +16,22 @@ class Layer:
         self.bias = np.random.rand(output_connections, 1) - 0.5     
 
     def propogate_forward(self, input):
+        self.get_properties()
         #set input vector
         self.input = input
         #print("the input is ", input)
         #print("the weights are ", self.weights)
 
         # calculate weighted sum
-        self.wsum = np.dot(self.weights, input) + self.bias
+        self.wsum =  np.dot(self.weights, input) + self.bias
+        
         # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
         #wsum = np.array(wsum, dtype = np.float32)
         
         # apply activation
         if self.activation: #if self.activation null then this is an output layer and we don't forward propogate from here
-            self.output = self.activation(wsum)
+            self.output = self.activation(self.wsum)
+            print("the outputs from this layer", self.output.shape)
             return self.output
 
 
@@ -55,7 +58,7 @@ class Layer:
         print("Weights:", self.weights)
         print("Bias:", self.bias)
         print("Input vector:", self.input)
-        print("Output vector:", self.output)
+        #print("Output vector:", self.output)
     
     """Take a integer as input and match it with an activation function. Then, return matched function"""
     def setActivation(self, activation):
