@@ -37,6 +37,7 @@ Note: Network now configurable for activations and no. of hidden layers/nodes. C
 6. https://github.com/omaraflak/Medium-Python-Neural-Network/blob/master/network.py
 7. https://github.com/jaymody/backpropagation/blob/master/nn.ipynb
 8. Previous F20BC Repository: https://github.com/syedkhajahussainsa/F21BC--Biologically-Inspired-Computation-cw
+9. https://www.bogotobogo.com/python/python_numpy_batch_gradient_descent_algorithm.php#:~:text=Gradient%20descent%20is%20an%20optimization,an%20assign%20or%20an%20update.
 ## For our ANN: 
 ### Activation Functions: 
 - Logistic
