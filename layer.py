@@ -15,41 +15,41 @@ class Layer:
         self.weights = np.random.rand(output_connections, self.num_nodes) - 0.5
         self.bias = np.random.rand(output_connections, 1) - 0.5     
 
-    def propogate_forward(self, input):
-        self.get_properties()
-        #set input vector
-        self.input = input
-        #print("the input is ", input)
-        #print("the weights are ", self.weights)
+    # def propogate_forward(self, input):
+    #     self.get_properties()
+    #     #set input vector
+    #     self.input = input
+    #     #print("the input is ", input)
+    #     #print("the weights are ", self.weights)
 
-        # calculate weighted sum
-        self.wsum =  np.dot(self.weights, input) + self.bias
+    #     # calculate weighted sum
+    #     self.wsum =  np.dot(self.weights, input) + self.bias
         
-        # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
-        #wsum = np.array(wsum, dtype = np.float32)
+    #     # convert type to float32 [reference: https://stackoverflow.com/questions/18557337/numpy-attributeerror-float-object-has-no-attribute-exp]
+    #     #wsum = np.array(wsum, dtype = np.float32)
         
-        # apply activation
-        if self.activation: #if self.activation null then this is an output layer and we don't forward propogate from here
-            self.output = self.activation(self.wsum)
-            print("the outputs from this layer", self.output.shape)
-            return self.output
+    #     # apply activation
+    #     if self.activation: #if self.activation null then this is an output layer and we don't forward propogate from here
+    #         self.output = self.activation(self.wsum)
+    #         print("the outputs from this layer", self.output.shape)
+    #         return self.output
 
 
-    def propogate_backward(self, loss, activate = True):
-        input_error = np.dot(loss, self.weights.T)
-        wgrad = np.dot(self.input.T, loss)
-        bgrad = loss * 1
+    # def propogate_backward(self, loss, activate = True):
+    #     input_error = np.dot(loss, self.weights.T)
+    #     wgrad = np.dot(self.input.T, loss)
+    #     bgrad = loss * 1
 
-        if self.activation_prime and activate:
-            return self.activation_prime(input_error), wgrad, bgrad
-        else:
-            return None, wgrad, bgrad
+    #     if self.activation_prime and activate:
+    #         return self.activation_prime(input_error), wgrad, bgrad
+    #     else:
+    #         return None, wgrad, bgrad
 
-    def update_parameters(self, wgrad, bgrad, learning_rate):
-        # updating the parameters
-        #print(self.weights)
-        self.weights = self.weights - (learning_rate * wgrad)
-        self.bias = self.bias - (learning_rate * bgrad)
+    # def update_parameters(self, wgrad, bgrad, learning_rate):
+    #     # updating the parameters
+    #     #print(self.weights)
+    #     self.weights = self.weights - (learning_rate * wgrad)
+    #     self.bias = self.bias - (learning_rate * bgrad)
     
     """debug function"""
     def get_properties(self):

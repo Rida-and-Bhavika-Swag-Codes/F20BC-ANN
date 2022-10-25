@@ -111,16 +111,22 @@ class ANN:
         # return dW1, db1, dW2, db2     
 
 
-    def train(self):
+    def train_sgd(self):
         for i in range(200):
             self.propogate_forward()
-            # self.propogate_backward()
+            self.propogate_backward()
+            
+            if i%10 == 0:
+                print("Iteration: ", i)
+                predictions = get_predictions(self.layers[-1].input)
+                print("Accuracy ", get_accuracy(predictions, self.output))
 
-            # if i%10 == 0:
-            #     print("Iteration: ", i)
-            #     predictions = get_predictions(self.layers[-1].input)
-            #     print("Accuracy ", get_accuracy(predictions, self.output))
+def get_predictions(A2):
+    return np.argmax(A2, 0)
 
+def get_accuracy(predictions, Y):
+    print(predictions, Y)
+    return np.sum(predictions == Y) / Y.size
 
 
 def one_hot(Y):
