@@ -9,7 +9,7 @@ Coding:
 4. Gradient Descent (SGD, Mini-batch, Batch) - bhavika
 5. Impement Learning Rate Schedule
 6. Train-Test Split - done
-7. Cross-Validation
+7. K fold Cross-Validation - done
 8. Implement one hot encoding when using 2 output nodes 
 9. Dropout Rate - rida
 10. Graphical Application
