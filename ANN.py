@@ -32,7 +32,6 @@ class ANN:
 
     """train ANN"""
     def train(self):
-        total_loss = 0
         for j in range(self.training_epochs):
             print("propogating forward")
             loss_epoch = 0
@@ -46,9 +45,8 @@ class ANN:
                 loss = self.sgd(self.output[sample]) 
                 loss_epoch += loss
                 print("loss:", loss)
-            total_loss += loss_epoch/len(self.input[0])
-        print("mean loss:", total_loss/(j+1)) # please check if this is correct 
-
+            epoch_error = loss_epoch/len(self.input[0])
+            print("epoch error:", epoch_error)
     """test ANN
     input: x values given to the model
     returns the predicted labels for input"""
@@ -118,8 +116,8 @@ class ANN:
 
 """ using one_hot_encode as this is binary classification """
 def one_hot_encode(y, nclasses):
-    y_onehot = np.zeros((y.shape[0], nclasses))
-    y_onehot[np.arange(y.shape[0]), y] = 1
+    y_onehot = np.zeros((y.size, nclasses))
+    y_onehot[np.arange(y.size), y] = 1
     return y_onehot
 
 # loss functions
