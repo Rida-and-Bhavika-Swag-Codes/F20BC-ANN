@@ -59,7 +59,6 @@ class ANN:
         print("the network layers are", self.layers)
         for currlayer, nextlayer in zip(self.layers[:-1], self.layers[1:]):
             print("weights", currlayer.weights)
-            print("the activations of this layer", currlayer.activation)
             #calculate weighted sum
             currlayer.wsum = currlayer.weights.dot(currlayer.input) + currlayer.bias
             #apply activation
@@ -69,6 +68,7 @@ class ANN:
 
 
     def propogate_backward(self):
+        print("CHECKING")
         wgrad, bgrad = [], []
         one_hot_Y = one_hot(self.output)
         layer = self.layers[-2]
@@ -78,7 +78,7 @@ class ANN:
         for i in range(-2, -(len(self.layers)), -1):
            smn = 1/ m * error.dot(self.layers[i].input.T)
            wgrad.append(smn)
-           print("the layer is", layer.weights.shape)
+           print("the layer is", layer, layer.weights.shape)
            print("the w of the last layer", smn.shape)
            smn = 1/m *np.sum(error)
            bgrad.append(smn)
@@ -89,12 +89,12 @@ class ANN:
         self.parameter_update(wgrad, bgrad)
 
     def parameter_update(self, wgrad, bgrad):
-        for layer, wupdate, bupdate in zip(reversed(self.layers), wgrad, bgrad):
-            print("dimensions", layer.weights.shape, wupdate.shape, bupdate.shape)
+        for layer, wupdate, bupdate in zip(reversed(self.layers[:-1]), wgrad, bgrad):
+            print("dimensions", layer, layer.weights.shape, wupdate.shape, bupdate.shape)
             layer.weights -= (self.learning_rate * wupdate)
             layer.bias -= (self.learning_rate * bupdate)
-            print("new weights", layer.weights)
-            print("new bias", layer.bias)
+            print("new weights", layer.weights.shape)
+            print("new bias", layer.bias.shape)
         
         
         # #dZ2 = A2 - one_hot_Y
