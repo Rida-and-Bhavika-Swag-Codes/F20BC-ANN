@@ -51,10 +51,6 @@ class ANN:
         print("added 1 output layer")
 
     def propogate_forward(self):
-        # propogate through the first layer
-        # first_layer = self.layers[0]
-        # wsum = first_layer.weights.dot(self.input) + first_layer.bias
-        # first_layer.output = first_layer.activation(2)(wsum)
 
         print("the network layers are", self.layers)
         for currlayer, nextlayer in zip(self.layers[:-1], self.layers[1:]):
@@ -95,20 +91,7 @@ class ANN:
             layer.bias -= (self.learning_rate * bupdate)
             print("new weights", layer.weights.shape)
             print("new bias", layer.bias.shape)
-        
-        
-        # #dZ2 = A2 - one_hot_Y
-        # dZ2 = mse(A2, Y)
-        # dZ2 = A2 - Y
-        # print("OUR ONE HOT ENCODED TRUE DATA", Y)
-        # print("Our output is", A2)
-        # print("LOSS IS", dZ2)
-        # dW2 = 1 / m * dZ2.dot(A1.T)
-        # db2 = 1 / m * np.sum(dZ2)
-        # dZ1 = W2.T.dot(dZ2) * ReLU_deriv(Z1)
-        # dW1 = 1 / m * dZ1.dot(X.T)
-        # db1 = 1 / m * np.sum(dZ1)
-        # return dW1, db1, dW2, db2     
+ 
 
 
     def train_sgd(self):
