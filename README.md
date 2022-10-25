@@ -10,7 +10,7 @@ Coding:
 5. Impement Learning Rate Schedule
 6. Train-Test Split - done
 7. K fold Cross-Validation - done
-8. Implement one hot encoding when using 2 output nodes 
+8. Implement one hot encoding when using 2 output nodes - done
 9. Dropout Rate - rida
 10. Graphical Application
 11.Do normalization of the training data
