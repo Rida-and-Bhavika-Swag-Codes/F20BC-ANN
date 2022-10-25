@@ -10,13 +10,13 @@ class ANN:
     Parameters: 
 
     """
-    def __init__(self, learn_rate, loss, input, output):
+    def __init__(self, input, output, loss = 2, epoch = 2, learn_rate = 0.1):
         self.input = input.to_numpy()  #input vector 
         self.layers = [] #assume 7 nodes in the next hidden layer
         self.output = output #Target class
 
         self.learning_rate = learn_rate
-        self.training_epochs = 2
+        self.training_epochs = epoch
         
         self.loss_function = None
         self.loss_prime = None
