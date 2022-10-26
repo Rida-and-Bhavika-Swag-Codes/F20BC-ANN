@@ -18,7 +18,7 @@ class ANN:
 
         match loss:
             case 1 : self.loss_function = bce
-            case 2 : self.loss_function = mse
+            case 2 : self.loss_function = sigmoid_loss
             #case 3 : self.loss_function = mae            
             case other: self.loss_function = None
  
@@ -69,22 +69,29 @@ class ANN:
             true_Y = self.output
 
         layer = self.layers[-2]
+        #error = layer.output - true_Y
         error = self.loss_function(layer.output, true_Y)
+        print("initial error shape", error.shape, "output shape", layer.output.shape, "encoded Y", true_Y.shape)
         print("my error function", self.loss_function)
-        print("the error was", error.shape, "but the error should be",)
 
         
         m = self.output.size
         
         for i in range(-2, -(len(self.layers)+1), -1):
-           smn = 1/ m * error.dot(self.layers[i].input.T)
+           #smn = 1/ m * error.dot(self.layers[i].input.T)
+           smn = (1/ m) * np.dot(error, self.layers[i].input.T)
            #print("appending the change for wgrad", wgrad)
            wgrad.append(smn)
            smn = 1/m *np.sum(error)
            bgrad.append(smn)
+           #back propogate first layer out of the loop
            if i == -(len(self.layers)):
             break
-           error = self.layers[i].weights.T.dot(error) * self.layers[i-1].activation_prime(self.layers[i-1].wsum)
+           #error = np.dot((self.layers[i].weights).T,error) 
+           error = self.layers[i].weights.T.dot(error) 
+           print("error shape is", error.shape)
+           error = error * self.layers[i-1].activation_prime(self.layers[i-1].wsum)
+           print("acitvation p shape is", self.layers[i-1].activation_prime(self.layers[i-1].wsum).shape)
         
 
         self.parameter_update(wgrad, bgrad)
@@ -127,11 +134,12 @@ EPSILON = 1e-7
 def bce(pred, y):
     print("the error is", -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON)))
     return -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON))
-
-def mse(pred, y):
-    print("first step substract", y - pred)
-    print("step 2 square", )
-    return np.square(np.subtract(y,pred)).mean()
+def sigmoid_loss(pred, y):
+    return np.sum(np.multiply(y,np.log(pred)) + np.multiply((1-y),np.log(1-pred)))
+# def mse(pred, y):
+#     print("first step substract", y - pred)
+#     print("step 2 square", )
+#     return np.square(np.subtract(y,pred)).mean()
 
 # def mae(pred, y):
 #     return np.mean(abs(y - pred))
