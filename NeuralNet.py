@@ -97,11 +97,11 @@ class ANN:
             layer.bias = layer.bias - (self.learning_rate * bupdate)
     
     def lrschedule(self, epoch):
-       # assuming in loop, epoch is 0, 1, 2..., epoch - 1
-       self.learning *= 1/(1 + self.decay * (epoch + 1))
+       self.learning_rate *= 1/(1 + self.decay * (epoch))
 
     def train_sgd(self):
         for j in range(self.training_epochs):
+            self.lrschedule(j)
             for i in range(200):
                 self.propogate_forward()
                 self.propogate_backward()
