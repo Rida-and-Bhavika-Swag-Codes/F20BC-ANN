@@ -101,17 +101,18 @@ class ANN:
        self.learning *= 1/(1 + self.decay * (epoch + 1))
 
     def train_sgd(self):
-        for i in range(200):
-            self.propogate_forward()
-            self.propogate_backward()
-            
-            if i%10 == 0:
-                print("Iteration: ", i)
-                predictions = get_predictions(self.layers[-1].input)
-                print("Accuracy ", get_accuracy(predictions, self.output))
-        predictions = get_predictions(self.layers[-1].input)
+        for j in range(self.training_epochs):
+            for i in range(200):
+                self.propogate_forward()
+                self.propogate_backward()
+
+                if i%10 == 0:
+                    print("Iteration: ", i)
+                    predictions = get_predictions(self.layers[-1].input)
+                    print("Accuracy ", get_accuracy(predictions, self.output))
+            predictions = get_predictions(self.layers[-1].input)
         print("Final Accuracy ", get_accuracy(predictions, self.output))
-        
+
 
 def get_predictions(A2):
     if A2.shape[0] <= 1:
