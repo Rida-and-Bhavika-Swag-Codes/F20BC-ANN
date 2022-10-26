@@ -4,21 +4,24 @@ class ANN:
 
     """
     Initialise network with hyperparameters
-
     Parameters: 
-
     """
-    def __init__(self, learn_rate, loss, input, output):
+    def __init__(self, learn_rate, loss, input, output, lrschedule):
         self.input = input #input vector 
         self.output = output #Target class
         self.layers = [] #assume 7 nodes in the next hidden layer
         
         self.learning_rate = learn_rate
         self.training_epochs = 2
+
+        self.lrsched = lrschedule #=0 when using constant lr, else =1 with decay
+
         self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
 
         match loss:
+            # binary cross entropy
             case 1 : self.loss_function = bce
+            # hinge loss
             case 2 : self.loss_function = mse
             #case 3 : self.loss_function = mae            
             case other: self.loss_function = None
@@ -32,8 +35,8 @@ class ANN:
         print("the output is", self.output)
 
         #append input layer
-        #l = layer.Layer(len(self.input), nodes_per_layer[0], activations[0])
         l = layer.Layer(30, nodes_per_layer[0], activations[0])
+        #assign the dataset features as input to the first layer
         l.input = self.input
         self.layers.append(l)
         print("adding input layer")
@@ -44,55 +47,55 @@ class ANN:
             print("added 1 hidden layer")
 
         #append output layer
-        #output layer has no output connections or activation function
-        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0 ))
+        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0 ))  #output layer has no output connections or activation function
         print("added 1 output layer")
 
     def propogate_forward(self):
-        print("our layers are", self.layers)
         for currlayer, nextlayer in zip(self.layers[:-1], self.layers[1:]):
-            print("layers in for prog", currlayer)
-            print("weights", currlayer.weights)
             #calculate weighted sum
             currlayer.wsum = currlayer.weights.dot(currlayer.input) + currlayer.bias
             #apply activation
             currlayer.output = currlayer.activation(currlayer.wsum)
-            #set next layers input as the output frm this layer
+            #set next layers input as the output frm this layer 
             nextlayer.input = currlayer.output
 
-
     def propogate_backward(self):
+        # hold cache of gradient vector for weights and biases
         wgrad, bgrad = [], []
+
         #use one hot encoding with 2 output nodes
         if self.layers[-1].num_nodes != 1:
             true_Y = one_hot(self.output)
-        else: 
+        else: #with only one node, no need to use one hot encoding
             true_Y = self.output
 
+        #find the error between the predicted value of the network and the true value(labels)
         layer = self.layers[-2]
         error = layer.output - true_Y
-        print("my error function", self.loss_function)
-        print("the error was", error.shape, "but the error should be",)
+
+
 
         
+        #no. of samples in the current train/test set
         m = self.output.size
         
+        #back propogate all other layers
         for i in range(-2, -(len(self.layers)+1), -1):
-           smn = 1/ m * error.dot(self.layers[i].input.T)
-           #print("appending the change for wgrad", wgrad)
-           wgrad.append(smn)
-           smn = 1/m *np.sum(error)
-           bgrad.append(smn)
-           if i == -(len(self.layers)):
-            break
-           error = self.layers[i].weights.T.dot(error) * self.layers[i-1].activation_prime(self.layers[i-1].wsum)
-        
+            
+            wgrad.append((1/ m) * np.dot(error, self.layers[i].input.T))
+            bgrad.append((1/m) *np.sum(error))
 
+            if i == -(len(self.layers)):
+                break
+            #find the error of the next layer
+            error = np.dot((self.layers[i].weights).T,error) * self.layers[i-1].activation_prime(self.layers[i-1].wsum)
+        
+        #after back prop, update the weights and biases
         self.parameter_update(wgrad, bgrad)
+
 
     def parameter_update(self, wgrad, bgrad):
         for layer, wupdate, bupdate in zip(reversed(self.layers[:-1]), wgrad, bgrad):
-            print("dimensions", layer, layer.weights.shape, wupdate.shape, bupdate.shape)
             layer.weights = layer.weights - (self.learning_rate * wupdate)
             layer.bias = layer.bias - (self.learning_rate * bupdate)
     
@@ -100,20 +103,29 @@ class ANN:
        self.learning_rate *= 1/(1 + self.decay * (epoch))
 
     def train_sgd(self):
+
+        
         for j in range(self.training_epochs):
-            self.lrschedule(j)
+
+            if self.lrschedule:
+                #set in the learning schedule 
+                self.lrschedule(j)
+
+            # update weights after each sample has been propogate forward and backward
+
             for i in range(200):
                 self.propogate_forward()
                 self.propogate_backward()
 
+                """remove before submission?"""
                 if i%10 == 0:
                     print("Iteration: ", i)
                     predictions = get_predictions(self.layers[-1].input)
-                    print("PRED", predictions)
                     print("Accuracy ", get_accuracy(predictions, self.output))
             predictions = get_predictions(self.layers[-1].input)
         print("Final Accuracy ", get_accuracy(predictions, self.output))
-    
+        
+
     def test(self, input, output):
         self.input = input
         self.output = output
@@ -124,6 +136,30 @@ class ANN:
         predictions = get_predictions(self.layers[-1].input)
         return get_accuracy(predictions, self.output)
 
+"""
+    def train_mini_batch(x,y,bsize):
+        # assert x.size == y.size
+        mbatches = []
+        data = np.arange(x.size)
+        np.random.shuffle(data)
+        for i in range(0, x.size, bsize):
+            last = min(i + bsize, x.size)
+            batch = data[i:last]
+            mbatches.append((x[batch], y[batch]))
+        return mbatches
+
+    def gradientDescent(X, y, learning_rate=0.001, batch_size=32):
+        theta = np.zeros((X.shape[1], 1))
+        error_list = []
+        max_iters = 3
+        for itr in range(max_iters):
+            mini_batches = create_mini_batches(X, y, batch_size)
+            for mini_batch in mini_batches:
+                X_mini, y_mini = mini_batch
+                theta = theta - learning_rate * gradient(X_mini, y_mini, theta)
+                error_list.append(cost(X_mini, y_mini, theta))
+"""
+
 def get_predictions(A2):
     print("HERE")
     print("A2", A2)
@@ -133,7 +169,8 @@ def get_predictions(A2):
     return np.argmax(A2, 0)
 
 def get_accuracy(predictions, Y):
-    print(np.sum(predictions == Y))
+
+
     return np.sum(predictions == Y) / Y.size
 
 def one_hot(Y):
@@ -144,22 +181,21 @@ def one_hot(Y):
 
 
 
-# adding epsilon to the predicted output to avoid log(0) error and for stability
-EPSILON = 1e-7  
 
-def bce(pred, y):
-    print("the error is", -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON)))
-    return -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON))
 
-def mse(pred, y):
-    print("first step substract", y - pred)
-    print("step 2 square", )
-    return np.mean(np.square(np.subtract(y,pred)))
+# # adding epsilon to the predicted output to avoid log(0) error and for stability
+# EPSILON = 1e-7  
 
-def mae(pred, y):
-    return np.mean(abs(y - pred))
+# def bce(pred, y):
+#     return -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON))
 
-    
+"""                                     LOSS FUNCTIONS                            """
+#BINARY CROSS ENTROPY
+def bce(y_pred,y_true): #https://stackoverflow.com/questions/67615051/implementing-binary-cross-entropy-loss-gives-different-answer-than-tensorflows
+    y_pred = np.clip(y_pred, 1e-7, 1 - 1e-7)
+    term_0 = (1-y_true) * np.log(1-y_pred + 1e-7)
+    term_1 = y_true * np.log(y_pred + 1e-7)  
+    print("the error is",  -np.mean(term_0+term_1))
+    return -np.mean(term_0+term_1)
 
-    
-         
+
