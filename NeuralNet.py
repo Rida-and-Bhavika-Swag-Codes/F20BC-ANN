@@ -6,13 +6,16 @@ class ANN:
     Initialise network with hyperparameters
     Parameters: 
     """
-    def __init__(self, learn_rate, loss, input, output):
+    def __init__(self, learn_rate, loss, input, output, lrschedule):
         self.input = input #input vector 
         self.output = output #Target class
         self.layers = [] #assume 7 nodes in the next hidden layer
         
         self.learning_rate = learn_rate
         self.training_epochs = 2
+        
+        self.lrsched = lrschedule #=0 when using constant lr, else =1 with decay
+
         self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
 
         match loss:
@@ -97,16 +100,22 @@ class ANN:
        self.learning_rate *= 1/(1 + self.decay * (epoch))
 
     def train_sgd(self):
+        
         for j in range(self.training_epochs):
-            self.lrschedule(j)
+
+            if self.lrschedule:
+                #set in the learning schedule 
+                self.lrschedule(j)
+
+            # update weights after each sample has been propogate forward and backward
             for i in range(200):
                 self.propogate_forward()
                 self.propogate_backward()
+
                 """remove before submission?"""
                 if i%10 == 0:
                     print("Iteration: ", i)
                     predictions = get_predictions(self.layers[-1].input)
-                    print("PRED", predictions)
                     print("Accuracy ", get_accuracy(predictions, self.output))
             predictions = get_predictions(self.layers[-1].input)
         print("Final Accuracy ", get_accuracy(predictions, self.output))
@@ -130,7 +139,6 @@ def get_predictions(A2):
     return np.argmax(A2, 0)
 
 def get_accuracy(predictions, Y):
-    print(np.sum(predictions == Y))
     return np.sum(predictions == Y) / Y.size
 
 def one_hot(Y):
@@ -141,9 +149,20 @@ def one_hot(Y):
 
 
 
-# adding epsilon to the predicted output to avoid log(0) error and for stability
-EPSILON = 1e-7  
+# # adding epsilon to the predicted output to avoid log(0) error and for stability
+# EPSILON = 1e-7  
 
-def bce(pred, y):
-    return -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON))
+# def bce(pred, y):
+#     return -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON))
+
+"""                                     LOSS FUNCTIONS                            """
+#BINARY CROSS ENTROPY
+def bce(y_pred,y_true): #https://stackoverflow.com/questions/67615051/implementing-binary-cross-entropy-loss-gives-different-answer-than-tensorflows
+    y_pred = np.clip(y_pred, 1e-7, 1 - 1e-7)
+    term_0 = (1-y_true) * np.log(1-y_pred + 1e-7)
+    term_1 = y_true * np.log(y_pred + 1e-7)  
+    print("the error is",  -np.mean(term_0+term_1))
+    return -np.mean(term_0+term_1)
+
+
 
