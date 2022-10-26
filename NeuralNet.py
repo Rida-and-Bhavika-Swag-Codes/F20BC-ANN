@@ -69,7 +69,7 @@ class ANN:
             true_Y = self.output
 
         layer = self.layers[-2]
-        error = self.loss_function(layer.output, true_Y)
+        error = layer.output - true_Y
         print("my error function", self.loss_function)
         print("the error was", error.shape, "but the error should be",)
 
