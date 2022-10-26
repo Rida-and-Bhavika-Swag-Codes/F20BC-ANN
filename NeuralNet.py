@@ -109,10 +109,13 @@ class ANN:
         
 
 def get_predictions(A2):
+    if A2.shape[0] <= 1:
+        temp = A2 > 0.5 # 0.5 is threshold value for output node 1
+        return temp.astype(int)
     return np.argmax(A2, 0)
 
 def get_accuracy(predictions, Y):
-    print(predictions, Y)
+    print(np.sum(predictions == Y))
     return np.sum(predictions == Y) / Y.size
 
 def one_hot(Y):
@@ -131,10 +134,10 @@ def bce(pred, y):
 def mse(pred, y):
     print("first step substract", y - pred)
     print("step 2 square", )
-    return np.square(np.subtract(y,pred)).mean()
+    return np.mean(np.square(np.subtract(y,pred)))
 
-# def mae(pred, y):
-#     return np.mean(abs(y - pred))
+def mae(pred, y):
+    return np.mean(abs(y - pred))
 
     
 
