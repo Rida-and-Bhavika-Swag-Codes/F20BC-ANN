@@ -12,18 +12,19 @@ Done:
 8. Implement one hot encoding when using 2 output nodes - done
 11.Do normalization of the training data - done
 12.Shuffle training data -done
+Accuracy for 2 output nodes - done
+Accuracy for 1 output node (using a threshold value)
 
 To do:
 - Batch GD - Rida
 - Mini batch GD - Rida
-- Accuracy for 2 output nodes - Rida
 - Implementing dropout - Rida
 - Train - test split - Rida
 - Implement softmax act - Rida
 - Cross validation testing - Bhavika
 - Implementing learning rate schedule - Bhavika
 - Graphical Application/ Console for user inputs - bhavika
-- Accuracy for 1 output node (using a threshold value) - Bhavika
+
 
 
 Report: 
