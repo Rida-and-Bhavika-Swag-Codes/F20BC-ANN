@@ -30,7 +30,7 @@ Report:
 2. Program Implementation Rationale (including reasons behind network architecture, literature review on activation and loss functions, etc) - Rida
 3. Program Workflow(include class diagram?) - Rida
 4. Results (basically just plotting visualizations, as mentioned in the specification and a simple reporting of the results - refer to visualisations below) - Bhavika
-5. Discussions (interpreting the discussions and giving reasons for different behaviors seen in the 'Results' section) - Bhavika
+5. Discussions (interpreting the results above and giving reasons for different behaviors) - Bhavika
 6. Conculsions
 
 Visualisation: 
