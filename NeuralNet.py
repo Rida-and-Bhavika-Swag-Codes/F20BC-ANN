@@ -15,6 +15,7 @@ class ANN:
         
         self.learning_rate = learn_rate
         self.training_epochs = 100
+        self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
 
         match loss:
             case 1 : self.loss_function = bce
@@ -94,7 +95,11 @@ class ANN:
             print("dimensions", layer, layer.weights.shape, wupdate.shape, bupdate.shape)
             layer.weights = layer.weights - (self.learning_rate * wupdate)
             layer.bias = layer.bias - (self.learning_rate * bupdate)
-             
+    
+    def lrschedule(self, epoch):
+       # assuming in loop, epoch is 0, 1, 2..., epoch - 1
+       self.learning *= 1/(1 + self.decay * (epoch + 1))
+
     def train_sgd(self):
         for i in range(200):
             self.propogate_forward()
@@ -123,6 +128,8 @@ def one_hot(Y):
     one_hot_Y[np.arange(Y.size), Y] = 1
     one_hot_Y = one_hot_Y.T
     return one_hot_Y
+
+
 
 # adding epsilon to the predicted output to avoid log(0) error and for stability
 EPSILON = 1e-7  
