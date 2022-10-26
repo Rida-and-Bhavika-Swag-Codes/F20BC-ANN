@@ -61,6 +61,7 @@ Note: Network now configurable for activations and no. of hidden layers/nodes. C
 9. https://www.bogotobogo.com/python/python_numpy_batch_gradient_descent_algorithm.php#:~:text=Gradient%20descent%20is%20an%20optimization,an%20assign%20or%20an%20update.
 10. for report: https://www.d.umn.edu/~rmaclin/cs1511/fall1999/lab-report.html
 11. report example: https://github.com/JZ76/GD-and-PSO/blob/main/F21BC%20Stage%201%20Report%20-%20Gabini%20%26%20Zhang.pdf
+12. https://www.freecodecamp.org/news/building-a-neural-network-from-scratch/
 ## For our ANN: 
 ### Activation Functions: 
 - Logistic
