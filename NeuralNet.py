@@ -15,15 +15,13 @@ class ANN:
         
         self.learning_rate = learn_rate
         self.training_epochs = 100
-        
-        self.loss_function = None
-        self.loss_prime = None
-        # 1 = bce, 2 = mse, 3 = mae
-        # match loss:
-        #     case 1 : self.loss_function, self.loss_prime = bce, dbce
-        #     case 2 : self.loss_function, self.loss_prime = mse, dmse
-        #     case 3 : self.loss_function, self.loss_prime = mae, dmae
-        #     case other: print("no loss function selected")
+
+        match loss:
+            case 1 : self.loss_function = bce
+            case 2 : self.loss_function = mse
+            #case 3 : self.loss_function = mae            
+            case other: self.loss_function = None
+ 
 
     def setLayers(self, activations, *nodes_per_layer):
         print("the activations are", activations)
@@ -41,12 +39,11 @@ class ANN:
 
         #append hidden layers
         for i in range (len(nodes_per_layer)-1):
-            #self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1]))
             self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1]))
             print("added 1 hidden layer")
 
         #append output layer
-        #self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0 ))#output layer has no output connections or activation function
+        #output layer has no output connections or activation function
         self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0 ))
         print("added 1 output layer")
 
@@ -72,20 +69,19 @@ class ANN:
             true_Y = self.output
 
         layer = self.layers[-2]
-        error = layer.output - true_Y
+        error = self.loss_function(layer.output, true_Y)
+        print("my error function", self.loss_function)
+        print("the error was", error.shape, "but the error should be",)
+
         
         m = self.output.size
         
         for i in range(-2, -(len(self.layers)+1), -1):
-           print("i is", i)
            smn = 1/ m * error.dot(self.layers[i].input.T)
            #print("appending the change for wgrad", wgrad)
            wgrad.append(smn)
-           print("the layer is", self.layers[i], self.layers[i].weights.shape)
-           print("the w of the last layer", smn.shape)
            smn = 1/m *np.sum(error)
            bgrad.append(smn)
-           print("the b of the last layer", smn.shape)
            if i == -(len(self.layers)):
             break
            error = self.layers[i].weights.T.dot(error) * self.layers[i-1].activation_prime(self.layers[i-1].wsum)
@@ -115,7 +111,6 @@ class ANN:
 def get_predictions(A2):
     return np.argmax(A2, 0)
 
-
 def get_accuracy(predictions, Y):
     print(predictions, Y)
     return np.sum(predictions == Y) / Y.size
@@ -125,6 +120,21 @@ def one_hot(Y):
     one_hot_Y[np.arange(Y.size), Y] = 1
     one_hot_Y = one_hot_Y.T
     return one_hot_Y
+
+# adding epsilon to the predicted output to avoid log(0) error and for stability
+EPSILON = 1e-7  
+
+def bce(pred, y):
+    print("the error is", -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON)))
+    return -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON))
+
+def mse(pred, y):
+    print("first step substract", y - pred)
+    print("step 2 square", )
+    return np.square(np.subtract(y,pred)).mean()
+
+# def mae(pred, y):
+#     return np.mean(abs(y - pred))
 
     
 
