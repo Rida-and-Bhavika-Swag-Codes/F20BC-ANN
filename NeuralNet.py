@@ -34,7 +34,7 @@ class ANN:
 
         #append input layer
         #l = layer.Layer(len(self.input), nodes_per_layer[0], activations[0])
-        l = layer.Layer(30, 10, activations[0])
+        l = layer.Layer(30, nodes_per_layer[0], activations[0])
         l.input = self.input
         self.layers.append(l)
         print("adding input layer")
@@ -51,9 +51,9 @@ class ANN:
         print("added 1 output layer")
 
     def propogate_forward(self):
-
-        print("the network layers are", self.layers)
+        print("our layers are", self.layers)
         for currlayer, nextlayer in zip(self.layers[:-1], self.layers[1:]):
+            print("layers in for prog", currlayer)
             print("weights", currlayer.weights)
             #calculate weighted sum
             currlayer.wsum = currlayer.weights.dot(currlayer.input) + currlayer.bias
@@ -64,36 +64,41 @@ class ANN:
 
 
     def propogate_backward(self):
-        print("CHECKING")
         wgrad, bgrad = [], []
-        one_hot_Y = one_hot(self.output)
+        #use one hot encoding with 2 output nodes
+        if self.layers[-1].num_nodes != 1:
+            true_Y = one_hot(self.output)
+        else: 
+            true_Y = self.output
+
         layer = self.layers[-2]
-        error = layer.output - one_hot_Y
+        error = layer.output - true_Y
+        
         m = self.output.size
         
-        for i in range(-2, -(len(self.layers)), -1):
+        for i in range(-2, -(len(self.layers)+1), -1):
+           print("i is", i)
            smn = 1/ m * error.dot(self.layers[i].input.T)
+           #print("appending the change for wgrad", wgrad)
            wgrad.append(smn)
-           print("the layer is", layer, layer.weights.shape)
+           print("the layer is", self.layers[i], self.layers[i].weights.shape)
            print("the w of the last layer", smn.shape)
            smn = 1/m *np.sum(error)
            bgrad.append(smn)
            print("the b of the last layer", smn.shape)
-           error = layer.weights.T.dot(error) * self.layers[i-1].activation_prime(self.layers[i-1].wsum)
+           if i == -(len(self.layers)):
+            break
+           error = self.layers[i].weights.T.dot(error) * self.layers[i-1].activation_prime(self.layers[i-1].wsum)
+        
 
-        #return wgrad, bgrad
         self.parameter_update(wgrad, bgrad)
 
     def parameter_update(self, wgrad, bgrad):
         for layer, wupdate, bupdate in zip(reversed(self.layers[:-1]), wgrad, bgrad):
             print("dimensions", layer, layer.weights.shape, wupdate.shape, bupdate.shape)
-            layer.weights -= (self.learning_rate * wupdate)
-            layer.bias -= (self.learning_rate * bupdate)
-            print("new weights", layer.weights.shape)
-            print("new bias", layer.bias.shape)
- 
-
-
+            layer.weights = layer.weights - (self.learning_rate * wupdate)
+            layer.bias = layer.bias - (self.learning_rate * bupdate)
+             
     def train_sgd(self):
         for i in range(200):
             self.propogate_forward()
@@ -103,6 +108,9 @@ class ANN:
                 print("Iteration: ", i)
                 predictions = get_predictions(self.layers[-1].input)
                 print("Accuracy ", get_accuracy(predictions, self.output))
+        predictions = get_predictions(self.layers[-1].input)
+        print("Final Accuracy ", get_accuracy(predictions, self.output))
+        
 
 def get_predictions(A2):
     return np.argmax(A2, 0)
@@ -110,7 +118,6 @@ def get_predictions(A2):
 def get_accuracy(predictions, Y):
     print(predictions, Y)
     return np.sum(predictions == Y) / Y.size
-
 
 def one_hot(Y):
     one_hot_Y = np.zeros((Y.size, Y.max() + 1))
