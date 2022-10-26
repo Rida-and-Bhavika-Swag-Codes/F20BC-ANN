@@ -14,7 +14,7 @@ class ANN:
         self.layers = [] #assume 7 nodes in the next hidden layer
         
         self.learning_rate = learn_rate
-        self.training_epochs = 100
+        self.training_epochs = 2
         self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
 
         match loss:
@@ -109,12 +109,24 @@ class ANN:
                 if i%10 == 0:
                     print("Iteration: ", i)
                     predictions = get_predictions(self.layers[-1].input)
+                    print("PRED", predictions)
                     print("Accuracy ", get_accuracy(predictions, self.output))
             predictions = get_predictions(self.layers[-1].input)
         print("Final Accuracy ", get_accuracy(predictions, self.output))
+    
+    def test(self, input, output):
+        self.input = input
+        self.output = output
 
+        self.layers[0].input = self.input
+        self.propogate_forward()
+
+        predictions = get_predictions(self.layers[-1].input)
+        return get_accuracy(predictions, self.output)
 
 def get_predictions(A2):
+    print("HERE")
+    print("A2", A2)
     if A2.shape[0] <= 1:
         temp = A2 > 0.5 # 0.5 is threshold value for output node 1
         return temp.astype(int)
