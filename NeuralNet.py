@@ -16,7 +16,9 @@ class ANN:
         self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
 
         match loss:
+            # binary cross entropy
             case 1 : self.loss_function = bce
+            # hinge loss
             case 2 : self.loss_function = mse
             #case 3 : self.loss_function = mae            
             case other: self.loss_function = None
@@ -30,8 +32,8 @@ class ANN:
         print("the output is", self.output)
 
         #append input layer
-        #l = layer.Layer(len(self.input), nodes_per_layer[0], activations[0])
         l = layer.Layer(30, nodes_per_layer[0], activations[0])
+        #assign the dataset features as input to the first layer
         l.input = self.input
         self.layers.append(l)
         print("adding input layer")
@@ -42,8 +44,7 @@ class ANN:
             print("added 1 hidden layer")
 
         #append output layer
-        #output layer has no output connections or activation function
-        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0 ))
+        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0 ))  #output layer has no output connections or activation function
         print("added 1 output layer")
 
     def propogate_forward(self):
@@ -52,34 +53,40 @@ class ANN:
             currlayer.wsum = currlayer.weights.dot(currlayer.input) + currlayer.bias
             #apply activation
             currlayer.output = currlayer.activation(currlayer.wsum)
-            #set next layers input as the output frm this layer
+            #set next layers input as the output frm this layer 
             nextlayer.input = currlayer.output
 
-
     def propogate_backward(self):
+        # hold cache of gradient vector for weights and biases
         wgrad, bgrad = [], []
+
         #use one hot encoding with 2 output nodes
         if self.layers[-1].num_nodes != 1:
             true_Y = one_hot(self.output)
-        else: 
+        else: #with only one node, no need to use one hot encoding
             true_Y = self.output
 
+        #find the error between the predicted value of the network and the true value(labels)
         layer = self.layers[-2]
         error = layer.output - true_Y
         
+        #no. of samples in the current train/test set
         m = self.output.size
         
+        #back propogate all other layers
         for i in range(-2, -(len(self.layers)+1), -1):
-           smn = (1/ m) * np.dot(error, self.layers[i].input.T)
-           wgrad.append(smn)
-           smn = (1/m) *np.sum(error)
-           bgrad.append(smn)
-           if i == -(len(self.layers)):
-            break
-           error = np.dot((self.layers[i].weights).T,error) * self.layers[i-1].activation_prime(self.layers[i-1].wsum)
-        
+            
+            wgrad.append((1/ m) * np.dot(error, self.layers[i].input.T))
+            bgrad.append((1/m) *np.sum(error))
 
+            if i == -(len(self.layers)):
+                break
+            #find the error of the next layer
+            error = np.dot((self.layers[i].weights).T,error) * self.layers[i-1].activation_prime(self.layers[i-1].wsum)
+        
+        #after back prop, update the weights and biases
         self.parameter_update(wgrad, bgrad)
+
 
     def parameter_update(self, wgrad, bgrad):
         for layer, wupdate, bupdate in zip(reversed(self.layers[:-1]), wgrad, bgrad):
@@ -95,7 +102,7 @@ class ANN:
             for i in range(200):
                 self.propogate_forward()
                 self.propogate_backward()
-
+                """remove before submission?"""
                 if i%10 == 0:
                     print("Iteration: ", i)
                     predictions = get_predictions(self.layers[-1].input)
