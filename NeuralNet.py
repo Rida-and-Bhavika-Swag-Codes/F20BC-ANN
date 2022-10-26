@@ -119,7 +119,7 @@ class ANN:
                     print("Accuracy ", get_accuracy(predictions, self.output))
             predictions = get_predictions(self.layers[-1].input)
         print("Final Accuracy ", get_accuracy(predictions, self.output))
-    
+        
     def test(self, input, output):
         self.input = input
         self.output = output
@@ -129,6 +129,30 @@ class ANN:
 
         predictions = get_predictions(self.layers[-1].input)
         return get_accuracy(predictions, self.output)
+"""
+    def train_mini_batch(x,y,bsize):
+        # assert x.size == y.size
+        mbatches = []
+        data = np.arange(x.size)
+        np.random.shuffle(data)
+        for i in range(0, x.size, bsize):
+            last = min(i + bsize, x.size)
+            batch = data[i:last]
+            mbatches.append((x[batch], y[batch]))
+        return mbatches
+
+    def gradientDescent(X, y, learning_rate=0.001, batch_size=32):
+        theta = np.zeros((X.shape[1], 1))
+        error_list = []
+        max_iters = 3
+        for itr in range(max_iters):
+            mini_batches = create_mini_batches(X, y, batch_size)
+            for mini_batch in mini_batches:
+                X_mini, y_mini = mini_batch
+                theta = theta - learning_rate * gradient(X_mini, y_mini, theta)
+                error_list.append(cost(X_mini, y_mini, theta))
+"""
+    
 
 def get_predictions(A2):
     print("HERE")
