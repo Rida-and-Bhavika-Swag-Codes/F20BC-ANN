@@ -3,23 +3,42 @@ Coursework 1
 
 ### Tasks:
 Coding: 
+Done:
 1. Class Architecture -done
 2. Forward Propogation (Logistic, Relu, Hyperbolic Tangent) -done
 3. Backward Propogation (Binary Cross Entropy, 2 others) -done
-4. Gradient Descent (SGD, Mini-batch, Batch) - bhavika
-5. Impement Learning Rate Schedule
 6. Train-Test Split - done
 7. K fold Cross-Validation - done
 8. Implement one hot encoding when using 2 output nodes - done
-9. Dropout Rate - rida
-10. Graphical Application
-11.Do normalization of the training data
+11.Do normalization of the training data - done
 12.Shuffle training data -done
-13. Find network metrics
+
+To do:
+- Batch GD - Rida
+- Mini batch GD - Rida
+- Accuracy for 2 output nodes - Rida
+- Implementing dropout - Rida
+- Train - test split - Rida
+- Cross validation testing - Bhavika
+- Implementing learning rate schedule - Bhavika
+- Graphical Application/ Console for user inputs - bhavika
+- Accuracy for 1 output node (using a threshold value) - Bhavika
+
+
+Report: 
+1. Intro - Bhavika
+2. Program Implementation Rationale (including reasons behind network architecture, literature review on activation and loss functions, etc) - Rida
+3. Program Workflow(include class diagram?) - Rida
+4. Results (basically just plotting visualizations, as mentioned in the specification and a simple reporting of the results - refer to visualisations below) - Bhavika
+5. Discussions (interpreting the discussions and giving reasons for different behaviors seen in the 'Results' section) - Bhavika
+6. Conculsions
 
 Visualisation: 
 1. Evaluate how different activation functions change accuracy 
-2. 
+2. Evaluate how different loss functions change accuracy
+3. Evaluate how different training schedules change accuracy
+4. Evaluate how different number of nodes change accuracy (both output and hidden layer nodes)
+5. Add more...
 
 Note: Network now configurable for activations and no. of hidden layers/nodes. Currently using 3 hidden layers. 
 1. input layer -> tanh, 30nodes
