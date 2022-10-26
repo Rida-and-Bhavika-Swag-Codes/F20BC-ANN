@@ -19,6 +19,7 @@ To do:
 - Accuracy for 2 output nodes - Rida
 - Implementing dropout - Rida
 - Train - test split - Rida
+- Implement softmax act - Rida
 - Cross validation testing - Bhavika
 - Implementing learning rate schedule - Bhavika
 - Graphical Application/ Console for user inputs - bhavika
