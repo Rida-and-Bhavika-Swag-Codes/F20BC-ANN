@@ -3,19 +3,44 @@ Coursework 1
 
 ### Tasks:
 Coding: 
+Done:
 1. Class Architecture -done
 2. Forward Propogation (Logistic, Relu, Hyperbolic Tangent) -done
 3. Backward Propogation (Binary Cross Entropy, 2 others) -done
-4. Gradient Descent (SGD, Mini-batch, Batch) - bhavika
-5. Impement Learning Rate Schedule
-6. Train-Test Split/ Cross-Validation - rida
-7. Implement one hot encoding when using 2 output nodes 
-8. Dropout Rate - rida
-9. Graphical Application
+6. Train-Test Split - done
+7. K fold Cross-Validation - done
+8. Implement one hot encoding when using 2 output nodes - done
+11.Do normalization of the training data - done
+12.Shuffle training data -done
+Accuracy for 2 output nodes - done
+Accuracy for 1 output node (using a threshold value)
+
+To do:
+- Batch GD - Rida
+- Mini batch GD - Rida
+- Implementing dropout - Rida
+- Train - test split - Rida
+- Implement softmax act - Rida
+- Cross validation testing - Bhavika
+- Implementing learning rate schedule - Bhavika
+- Graphical Application/ Console for user inputs - bhavika
+
+
+
+Report: 
+1. Intro - Bhavika
+2. Program Implementation Rationale (including reasons behind network architecture, literature review on activation and loss functions, etc) - Rida
+3. Program Workflow(include class diagram?) - Rida
+4. Results (basically just plotting visualizations, as mentioned in the specification and a simple reporting of the results - refer to visualisations below) - Bhavika
+5. Discussions (interpreting the results above and giving reasons for different behaviors) - Bhavika
+6. Conculsions
 
 Visualisation: 
 1. Evaluate how different activation functions change accuracy 
-2. 
+2. Evaluate how different loss functions change accuracy
+3. Evaluate how different training schedules change accuracy
+4. Evaluate how different number of nodes change accuracy (both output and hidden layer nodes)
+5. Add more...
 
 Note: Network now configurable for activations and no. of hidden layers/nodes. Currently using 3 hidden layers. 
 1. input layer -> tanh, 30nodes
@@ -33,6 +58,10 @@ Note: Network now configurable for activations and no. of hidden layers/nodes. C
 6. https://github.com/omaraflak/Medium-Python-Neural-Network/blob/master/network.py
 7. https://github.com/jaymody/backpropagation/blob/master/nn.ipynb
 8. Previous F20BC Repository: https://github.com/syedkhajahussainsa/F21BC--Biologically-Inspired-Computation-cw
+9. https://www.bogotobogo.com/python/python_numpy_batch_gradient_descent_algorithm.php#:~:text=Gradient%20descent%20is%20an%20optimization,an%20assign%20or%20an%20update.
+10. for report: https://www.d.umn.edu/~rmaclin/cs1511/fall1999/lab-report.html
+11. report example: https://github.com/JZ76/GD-and-PSO/blob/main/F21BC%20Stage%201%20Report%20-%20Gabini%20%26%20Zhang.pdf
+12. https://www.freecodecamp.org/news/building-a-neural-network-from-scratch/
 ## For our ANN: 
 ### Activation Functions: 
 - Logistic

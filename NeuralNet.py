@@ -13,7 +13,7 @@ class ANN:
         
         self.learning_rate = learn_rate
         self.training_epochs = 2
-        
+
         self.lrsched = lrschedule #=0 when using constant lr, else =1 with decay
 
         self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
@@ -72,6 +72,9 @@ class ANN:
         #find the error between the predicted value of the network and the true value(labels)
         layer = self.layers[-2]
         error = layer.output - true_Y
+
+
+
         
         #no. of samples in the current train/test set
         m = self.output.size
@@ -100,6 +103,7 @@ class ANN:
        self.learning_rate *= 1/(1 + self.decay * (epoch))
 
     def train_sgd(self):
+
         
         for j in range(self.training_epochs):
 
@@ -108,6 +112,7 @@ class ANN:
                 self.lrschedule(j)
 
             # update weights after each sample has been propogate forward and backward
+
             for i in range(200):
                 self.propogate_forward()
                 self.propogate_backward()
@@ -120,6 +125,7 @@ class ANN:
             predictions = get_predictions(self.layers[-1].input)
         print("Final Accuracy ", get_accuracy(predictions, self.output))
         
+
     def test(self, input, output):
         self.input = input
         self.output = output
@@ -129,6 +135,7 @@ class ANN:
 
         predictions = get_predictions(self.layers[-1].input)
         return get_accuracy(predictions, self.output)
+
 """
     def train_mini_batch(x,y,bsize):
         # assert x.size == y.size
@@ -152,7 +159,6 @@ class ANN:
                 theta = theta - learning_rate * gradient(X_mini, y_mini, theta)
                 error_list.append(cost(X_mini, y_mini, theta))
 """
-    
 
 def get_predictions(A2):
     print("HERE")
@@ -163,6 +169,8 @@ def get_predictions(A2):
     return np.argmax(A2, 0)
 
 def get_accuracy(predictions, Y):
+
+
     return np.sum(predictions == Y) / Y.size
 
 def one_hot(Y):
@@ -170,6 +178,8 @@ def one_hot(Y):
     one_hot_Y[np.arange(Y.size), Y] = 1
     one_hot_Y = one_hot_Y.T
     return one_hot_Y
+
+
 
 
 
@@ -187,6 +197,5 @@ def bce(y_pred,y_true): #https://stackoverflow.com/questions/67615051/implementi
     term_1 = y_true * np.log(y_pred + 1e-7)  
     print("the error is",  -np.mean(term_0+term_1))
     return -np.mean(term_0+term_1)
-
 
 
