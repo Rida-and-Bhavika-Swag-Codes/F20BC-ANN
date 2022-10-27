@@ -1,11 +1,13 @@
 import layer
 import numpy as np
+import time
 class ANN:
 
     """
     Initialise network with hyperparameters
     """
-    def __init__(self, input, output, typegd, learn_rate = 0.1 , epoch = 1, loss = 1, lrschedule = 0, bsize =1):
+    def __init__(self, input, output, typegd, learn_rate = 0.1 , epoch = 100, loss = 2, lrschedule = 0, bsize =1):
+
         self.input = input # input vector 
         self.output = output # target class
         self.layers = [] 
@@ -49,21 +51,21 @@ class ANN:
         # assign the dataset features as input to the first layer
         l.input = self.input
         self.layers.append(l)
-        print("added input layer")
-        layer.Layer.get_properties(l)
+        # print("added input layer")
+        # layer.Layer.get_properties(l)
 
         # append hidden layers
         for i in range (len(nodes_per_layer)-1):
             l = layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1])
             self.layers.append(l)
-            print("added 1 hidden layer")
-            layer.Layer.get_properties(l)
+            # print("added 1 hidden layer")
+            # layer.Layer.get_properties(l)
 
         # append output layer
         l = layer.Layer(nodes_per_layer[-1], 0, 0)
         self.layers.append(l)  # output layer has no output connections or activation function
-        print("added output layer")
-        layer.Layer.get_properties(l)
+        # print("added output layer")
+        # layer.Layer.get_properties(l)
 
     def propogate_forward(self):
         for currlayer, nextlayer in zip(self.layers[:-1], self.layers[1:]):
@@ -117,6 +119,7 @@ class ANN:
         self.learning_rate *= 1/(1 + self.decay * (epoch))
 
     def train_sgd(self):
+        start_time = time.time()
         loss = []
         for j in range(self.training_epochs):
 
@@ -131,7 +134,7 @@ class ANN:
                 predictions = get_predictions(self.layers[-1].input)
                 loss.append(self.loss_function(predictions, self.output))
                 self.propogate_backward(self.output)
-
+        end_time = time.time() #????
         return sum(loss)/len(loss), get_accuracy(predictions, self.output)
     
     def create_batches(self):
@@ -191,6 +194,7 @@ class ANN:
                 print(y_mini)
                 print("h", y_mini.flatten(), "h")
                 self.propogate_backward(y_mini.flatten())
+        end_time = time.time()
         return sum(loss)/len(loss), get_accuracy(predictions, self.output)
                 
                         
