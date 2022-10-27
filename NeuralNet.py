@@ -15,7 +15,7 @@ class ANN:
 
         self.lrsched = None
         self.decay = None
-
+        self.batchsize = 1 #default is 1 for sgd
         match loss:
             case 1 : self.loss_function = bce
             case 2 : self.loss_function = hinge_loss
@@ -60,22 +60,22 @@ class ANN:
             #set next layers input as the output frm this layer 
             nextlayer.input = currlayer.output
 
-    def propogate_backward(self):
+    def propogate_backward(self, truey):
         # hold cache of gradient vector for weights and biases
         wgrad, bgrad = [], []
 
         # use one hot encoding with 2 output nodes
         if self.layers[-1].num_nodes != 1:
-            true_y = one_hot(self.output)
+            true_y = one_hot(truey)
         else: # with only one node, no need to use one hot encoding
-            true_y = self.output
+            true_y = truey
 
         # find the error between the predicted value of the network and the true value(labels)
         layer = self.layers[-2]
         error = layer.output - true_y
 
         # no. of samples in the current train/test set
-        m = self.output.size
+        m = truey.size
         
         # back propogate all other layers
         for i in range(-2, -(len(self.layers) + 1), -1):
@@ -111,15 +111,76 @@ class ANN:
                 self.lrschedule(j)
 
             # update weights after each sample has been propogate forward and backward
-            for i in range(200):
+            for i in range(self.training_epochs):
                 self.propogate_forward()
+                #calculate loss/cost
+                predictions = get_predictions(self.layers[-1].input)
                 loss.append(self.loss_function(predictions, self.output))
-                self.propogate_backward()
+                self.propogate_backward(self.output)
 
-            predictions = get_predictions(self.layers[-1].input)
         return sum(loss)/len(loss), get_accuracy(predictions, self.output)
-        
+    
+    def create_batches(self):
+        """
+        mbatches = []
+        data = np.arange(self.input.shape[0])
+        print("the arange of data size", data)
+        np.random.shuffle(data)
+        for i in range(0, self.input.shape[0], self.batchsize):
+            last = min(i + self.batchsize, self.input.shape[0])
+            batch = data[i:last]
+            mbatches.append((self.input[batch], self.output[batch]))
+        return mbatches
+        """
+        # create a list to hold all minibatches
+        mini_batches = []
+        #concatenate each sample with its corresponding label
+        print(self.input.T)
+        y = np.resize(self.output, (len(self.input.T),1))
+        data = np.hstack((self.input.T, y)) 
+        #shuffle data
+        np.random.shuffle(data)
+        i = 0
 
+        for i in range((data.shape[0] // self.batchsize) + 1):
+            #slice a minibatch out of the data list
+            mini_batch = data[i * self.batchsize:(i + 1)*self.batchsize, :]
+            #seperate the previously concatenated X and Y data before training
+            X_mini = mini_batch[:, :-1].T
+            Y_mini = mini_batch[:, -1].reshape((-1, 1))
+            #add new mini batch 
+            mini_batches.append((X_mini, Y_mini))
+
+        #when 1 batch size is smaller than the others
+        if data.shape[0] % self.batchsize != 0:
+            mini_batch = data[i * self.batchsize:data.shape[0]]
+            X_mini = mini_batch[:, :-1].T
+            Y_mini = mini_batch[:, -1].reshape((-1, 1))
+            mini_batches.append((X_mini, Y_mini))
+        return mini_batches
+
+
+
+    def train_mbgd(self):
+        loss = []
+        for i in range(self.training_epochs):
+            mini_batches = self.create_batches()
+            for mini_batch in mini_batches:
+                X_mini, y_mini = mini_batch
+                self.layers[0].input = X_mini
+                self.propogate_forward()
+                #calculate loss/cost
+                predictions = get_predictions(self.layers[-1].input)
+                loss.append(self.loss_function(predictions, self.output))
+                print(y_mini)
+                print(y_mini.flatten())
+                self.propogate_backward(np.resize(y_mini, (len(self.input.T),0)))
+        return sum(loss)/len(loss), get_accuracy(predictions, self.output)
+                
+                
+ 
+        return theta, error_list
+        
     def test(self, input, output):
         # setting X_test as input and y_test as output
         self.input = input
@@ -140,18 +201,6 @@ class ANN:
         print("Decay:", self.decay)
 
 
-
-    def train_mini_batch(self, x, y, bsize):
-        # assert x.size == y.size 
-        mbatches = []
-        data = np.arange(x.size)
-        np.random.shuffle(data)
-        for i in range(0, x.size, bsize):
-            last = min(i + bsize, x.size)
-            batch = data[i:last]
-            mbatches.append((x[batch], y[batch]))
-        return mbatches
-        
     # def iterate_minibatches(inputs, targets, batchsize, shuffle=False):
     #     if shuffle:
     #         indices = np.arange(inputs.shape[0])
