@@ -22,10 +22,9 @@ class ANN:
             # binary cross entropy
             case 1 : self.loss_function = bce
             # hinge loss
-            case 2 : self.loss_function = mse
-            #case 3 : self.loss_function = mae            
+            case 2 : self.loss_function = hinge_loss
+            case 3 : self.loss_function = square_loss
             case other: self.loss_function = None
- 
 
     def setLayers(self, activations, *nodes_per_layer):
         print("the activations are", activations)
@@ -161,16 +160,12 @@ class ANN:
 """
 
 def get_predictions(A2):
-    print("HERE")
-    print("A2", A2)
     if A2.shape[0] <= 1:
         temp = A2 > 0.5 # 0.5 is threshold value for output node 1
         return temp.astype(int)
     return np.argmax(A2, 0)
 
 def get_accuracy(predictions, Y):
-
-
     return np.sum(predictions == Y) / Y.size
 
 def one_hot(Y):
@@ -179,8 +174,11 @@ def one_hot(Y):
     one_hot_Y = one_hot_Y.T
     return one_hot_Y
 
-
-
+def normalize(x):
+    #normalize the data https://www.kaggle.com/code/joshbeau/tumor-diagnosis-neural-net-from-first-principals
+    x_mean = np.mean(x, axis=1, keepdims=True) #Find the mean of each feature
+    x_max = np.max(x, axis=1, keepdims=True) #Find the maximum of each feature
+    return (x - x_mean)/(x_max) #Normalizing our dataset by subtracting the mean and dividing by the max
 
 
 # # adding epsilon to the predicted output to avoid log(0) error and for stability
