@@ -10,14 +10,14 @@ Done:
 6. Train-Test Split - done
 7. K fold Cross-Validation - done
 8. Implement one hot encoding when using 2 output nodes - done
-11.Do normalization of the training data - done
-12.Shuffle training data -done
-13. Accuracy for 2 output nodes - done
-14. Accuracy for 1 output node (using a threshold value)
-15. Train - test split
-16. Cross validation testing
-17. Implementing learning rate schedule
-18. Console for user inputs
+9. Do normalization of the training data - done
+10. Shuffle training data -done
+11. Accuracy for 2 output nodes - done
+12. Accuracy for 1 output node (using a threshold value)
+13. Train - test split
+14. Cross validation testing
+15. Implementing learning rate schedule
+16. Console for user inputs
 
 To do:
 - Batch GD - Rida
