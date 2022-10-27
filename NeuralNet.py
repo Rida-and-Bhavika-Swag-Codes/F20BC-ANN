@@ -198,4 +198,14 @@ def bce(y_pred,y_true): #https://stackoverflow.com/questions/67615051/implementi
     print("the error is",  -np.mean(term_0+term_1))
     return -np.mean(term_0+term_1)
 
+# https://stats.stackexchange.com/questions/539496/how-to-create-hinge-loss-function-in-python-from-scratch
+def hinge_loss(y_pred, y_true):
+    npred = np.array([-1 if i == 0 else i for i in y_pred])
+    ntrue = np.array([-1 if i == 0 else i for i in y_true])
 
+    return np.mean([max(0, 1 - act * pred) for act, pred in zip(ntrue, npred)])
+
+# this is for classification, formula is different than for regression
+# https://math.stackexchange.com/questions/2370977/square-loss-function-in-classification
+def square_loss(y_pred, y_true):
+    return np.mean(np.square(1 - y_true * y_pred))
