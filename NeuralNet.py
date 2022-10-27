@@ -5,7 +5,7 @@ class ANN:
     """
     Initialise network with hyperparameters
     """
-    def __init__(self, input, output, learn_rate = 0.1 , epoch = 1, loss = 1, lrschedule = 0):
+    def __init__(self, input, output, learn_rate = 0.1 , epoch = 1, loss = 1, lrschedule = 0, bsize =1):
         self.input = input # input vector 
         self.output = output # target class
         self.layers = [] 
@@ -15,7 +15,7 @@ class ANN:
 
         self.lrsched = None
         self.decay = None
-        self.batchsize = 1 #default is 1 for sgd
+        self.batchsize = bsize
         match loss:
             case 1 : self.loss_function = bce
             case 2 : self.loss_function = hinge_loss
@@ -142,17 +142,20 @@ class ANN:
         np.random.shuffle(data)
         i = 0
 
-        for i in range((data.shape[0] // self.batchsize) + 1):
+        for i in range((data.shape[0] // self.batchsize)):
             #slice a minibatch out of the data list
             mini_batch = data[i * self.batchsize:(i + 1)*self.batchsize, :]
             #seperate the previously concatenated X and Y data before training
             X_mini = mini_batch[:, :-1].T
+            print("X_mini being added is", X_mini)
             Y_mini = mini_batch[:, -1].reshape((-1, 1))
+            print("Y_mini being added is", Y_mini)
             #add new mini batch 
             mini_batches.append((X_mini, Y_mini))
 
-        #when 1 batch size is smaller than the others
+        # when batch size doesnt divide the no.of samples perfectly, seperately append the last batch (will be of a different size)
         if data.shape[0] % self.batchsize != 0:
+            print("in unequal minibatch creation")
             mini_batch = data[i * self.batchsize:data.shape[0]]
             X_mini = mini_batch[:, :-1].T
             Y_mini = mini_batch[:, -1].reshape((-1, 1))
@@ -160,13 +163,11 @@ class ANN:
         return mini_batches
 
 
-
     def train_mbgd(self):
         loss = []
         for i in range(self.training_epochs):
             mini_batches = self.create_batches()
             for mini_batch in mini_batches:
-                print("iterating over a mini batch")
                 X_mini, y_mini = mini_batch
                 self.layers[0].input = X_mini
                 self.propogate_forward()
@@ -178,10 +179,7 @@ class ANN:
                 self.propogate_backward(y_mini.flatten())
         return sum(loss)/len(loss), get_accuracy(predictions, self.output)
                 
-                
- 
-        return theta, error_list
-        
+                        
     def test(self, input, output):
         # setting X_test as input and y_test as output
         self.input = input
