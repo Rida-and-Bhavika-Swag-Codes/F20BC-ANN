@@ -166,6 +166,7 @@ class ANN:
         for i in range(self.training_epochs):
             mini_batches = self.create_batches()
             for mini_batch in mini_batches:
+                print("iterating over a mini batch")
                 X_mini, y_mini = mini_batch
                 self.layers[0].input = X_mini
                 self.propogate_forward()
@@ -173,8 +174,8 @@ class ANN:
                 predictions = get_predictions(self.layers[-1].input)
                 loss.append(self.loss_function(predictions, self.output))
                 print(y_mini)
-                print(y_mini.flatten())
-                self.propogate_backward(np.resize(y_mini, (len(self.input.T),0)))
+                print("h", y_mini.flatten(), "h")
+                self.propogate_backward(y_mini.flatten())
         return sum(loss)/len(loss), get_accuracy(predictions, self.output)
                 
                 
