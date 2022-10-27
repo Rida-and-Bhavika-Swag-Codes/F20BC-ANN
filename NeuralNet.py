@@ -14,6 +14,7 @@ class ANN:
         self.training_epochs = epoch
 
         self.lrsched = None
+        self.decay = None
 
         match loss:
             case 1 : self.loss_function = bce
@@ -35,15 +36,20 @@ class ANN:
         l.input = self.input
         self.layers.append(l)
         print("added input layer")
+        layer.Layer.get_properties(l)
 
         # append hidden layers
         for i in range (len(nodes_per_layer)-1):
-            self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1]))
+            l = layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1])
+            self.layers.append(l)
             print("added 1 hidden layer")
+            layer.Layer.get_properties(l)
 
         # append output layer
-        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0))  # output layer has no output connections or activation function
+        l = layer.Layer(nodes_per_layer[-1], 0, 0)
+        self.layers.append(l)  # output layer has no output connections or activation function
         print("added output layer")
+        layer.Layer.get_properties(l)
 
     def propogate_forward(self):
         for currlayer, nextlayer in zip(self.layers[:-1], self.layers[1:]):
@@ -125,6 +131,13 @@ class ANN:
 
         predictions = get_predictions(self.layers[-1].input)
         return get_accuracy(predictions, self.output)
+    
+    def get_properties(self):
+        print("Number of layers:", len(self.layers))
+        print("Learning rate:", self.learning_rate)
+        print("Training epochs:", self.training_epochs)
+        print("Loss function:", self.loss_function)
+        print("Decay:", self.decay)
 
 """
     def train_mini_batch(x,y,bsize):

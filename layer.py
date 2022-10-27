@@ -18,10 +18,11 @@ class Layer:
     def get_properties(self):
         print("Number of nodes:", self.num_nodes)
         print("Activation Function:", self.activation)
-        print("Weights:", self.weights)
-        print("Bias:", self.bias)
-        print("Input vector:", self.input)
-        print("Output vector:", self.output)
+        # print("Weights:", self.weights)
+        # print("Bias:", self.bias)
+        # print("Input vector:", self.input)
+        # print("Output vector:", self.output)
+        print()
     
     """Take a integer as input and match it with an activation function. Then, return matched function"""
     def setActivation(self, activation):

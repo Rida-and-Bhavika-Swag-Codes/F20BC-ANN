@@ -29,6 +29,7 @@ def main():
     lrschedule = input("Control learning rate? (learning rate scheduler) [y/N]")
     if lrschedule.lower() == "y":
         lrschedule = 1
+        print("Learning rate scheduler active.")
     else:
         lrschedule = 0
         print("Learning rate will remain constant.")
@@ -40,6 +41,8 @@ def main():
     print("\nTraining Neural Network..")
     ann = NeuralNet.ANN(X_train, y_train, lr, epoch, loss, lrschedule)
     ann.setLayers(activations, nodes)
+
+    ann.get_properties()
     
     avgloss, accuracy = ann.train_sgd()
     print("\nAverage loss over", epoch, "epoch(s)", "is", avgloss)
@@ -48,5 +51,3 @@ def main():
     print("\nTesting Neural Network..")
     test = ann.test(X_test, y_test)
     print("Testing accuracy is", round(test * 100, 2), "%")
-
-main()
