@@ -2,7 +2,7 @@ import numpy as np
 
 class Layer:
 
-    def __init__(self, nodes = 1, output_connections = 1, activation = 2):
+    def __init__(self, nodes = 2, output_connections = 1, activation = 2):
         self.input = None # input vector
         self.output = None # output vector
         self.num_nodes = nodes

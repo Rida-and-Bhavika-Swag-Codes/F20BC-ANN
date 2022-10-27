@@ -27,20 +27,23 @@ class ANN:
             self.lrsched = lrschedule # =0 when using constant lr, else =1 with decay
             self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
 
-    def setLayers(self, activations, *nodes_per_layer):
+    def setLayers(self, activations, nodes_per_layer):
 
         # append input layer
         l = layer.Layer(30, nodes_per_layer[0], activations[0])
         # assign the dataset features as input to the first layer
         l.input = self.input
         self.layers.append(l)
+        print("added input layer")
 
         # append hidden layers
         for i in range (len(nodes_per_layer)-1):
             self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1]))
+            print("added 1 hidden layer")
 
         # append output layer
         self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0))  # output layer has no output connections or activation function
+        print("added output layer")
 
     def propogate_forward(self):
         for currlayer, nextlayer in zip(self.layers[:-1], self.layers[1:]):
@@ -108,7 +111,7 @@ class ANN:
 
             predictions = get_predictions(self.layers[-1].input)
             loss.append(self.loss_function(predictions, self.output))
-        return loss, get_accuracy(predictions, self.output)
+        return sum(loss)/len(loss), get_accuracy(predictions, self.output)
         
 
     def test(self, input, output):
@@ -166,13 +169,6 @@ def one_hot(y):
     one_hot_y[np.arange(y.size), y] = 1
     one_hot_y = one_hot_y.T
     return one_hot_y
-
-# normalizing X
-def normalize(X):
-    # normalize the data https://www.kaggle.com/code/joshbeau/tumor-diagnosis-neural-net-from-first-principals
-    X_mean = np.mean(X, axis=1, keepdims=True) # mean of each feature
-    X_std = np.std(X, axis=1, keepdims=True) # standard deviation of each feature
-    return (X - X_mean)/(X_std) 
 
 
 """ LOSS FUNCTIONS """
