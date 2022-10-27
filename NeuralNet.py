@@ -5,7 +5,7 @@ class ANN:
     """
     Initialise network with hyperparameters
     """
-    def __init__(self, input, output, learn_rate = 0.1 , epoch = 1, loss = 1, lrschedule = 0, bsize =1):
+    def __init__(self, input, output, typegd, learn_rate = 0.1 , epoch = 1, loss = 1, lrschedule = 0, bsize =1):
         self.input = input # input vector 
         self.output = output # target class
         self.layers = [] 
@@ -15,7 +15,21 @@ class ANN:
 
         self.lrsched = None
         self.decay = None
-        self.batchsize = bsize
+        self.batchsize = None
+        
+        match typegd:
+            case 1: #batch gradient descent
+                self.batchsize = self.input.shape[1] 
+                self.typegd = self.train_mbgd
+
+            case 2: #mini batch gradient descent
+                self.typegd = self.train_mbgd
+
+            case 0: #default to stochastic gradient descent
+                self.typegd = self.train_sgd
+
+
+
         match loss:
             case 1 : self.loss_function = bce
             case 2 : self.loss_function = hinge_loss
