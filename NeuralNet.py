@@ -115,10 +115,12 @@ class ANN:
             # update weights after each sample has been propogate forward and backward
             for i in range(200):
                 self.propogate_forward()
+                loss.append(self.loss_function(predictions, self.output))
                 self.propogate_backward()
 
             predictions = get_predictions(self.layers[-1].input)
             loss.append(self.loss_function(predictions, self.output))
+
         end_time = time.time()
         return sum(loss)/len(loss), get_accuracy(predictions, self.output), end_time - start_time
         
@@ -142,9 +144,10 @@ class ANN:
         print("Loss function:", self.loss_function)
         print("Decay:", self.decay)
 
-"""
-    def train_mini_batch(x,y,bsize):
-        # assert x.size == y.size
+
+
+    def train_mini_batch(self, x, y, bsize):
+        # assert x.size == y.size 
         mbatches = []
         data = np.arange(x.size)
         np.random.shuffle(data)
@@ -153,7 +156,19 @@ class ANN:
             batch = data[i:last]
             mbatches.append((x[batch], y[batch]))
         return mbatches
-
+        
+    # def iterate_minibatches(inputs, targets, batchsize, shuffle=False):
+    #     if shuffle:
+    #         indices = np.arange(inputs.shape[0])
+    #         np.random.shuffle(indices)
+    #     for start_idx in range(0, inputs.shape[0], batchsize):
+    #         end_idx = min(start_idx + batchsize, inputs.shape[0])
+    #         if shuffle:
+    #             excerpt = indices[start_idx:end_idx]
+    #         else:
+    #             excerpt = slice(start_idx, end_idx)
+    #         yield inputs[excerpt], targets[excerpt]
+    """
     def gradientDescent(X, y, learning_rate=0.001, batch_size=32):
         theta = np.zeros((X.shape[1], 1))
         error_list = []
@@ -164,7 +179,7 @@ class ANN:
                 X_mini, y_mini = mini_batch
                 theta = theta - learning_rate * gradient(X_mini, y_mini, theta)
                 error_list.append(cost(X_mini, y_mini, theta))
-"""
+    """
 
 """ HELPER FUNCTIONS """
 
