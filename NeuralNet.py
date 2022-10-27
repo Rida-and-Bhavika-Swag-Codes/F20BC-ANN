@@ -72,9 +72,6 @@ class ANN:
         layer = self.layers[-2]
         error = layer.output - true_Y
 
-
-
-        
         #no. of samples in the current train/test set
         m = self.output.size
         
@@ -120,6 +117,7 @@ class ANN:
                 if i%10 == 0:
                     print("Iteration: ", i)
                     predictions = get_predictions(self.layers[-1].input)
+                    print("LOSS", self.loss_function(predictions, self.output))
                     print("Accuracy ", get_accuracy(predictions, self.output))
             predictions = get_predictions(self.layers[-1].input)
         print("Final Accuracy ", get_accuracy(predictions, self.output))
@@ -162,7 +160,7 @@ class ANN:
 def get_predictions(A2):
     if A2.shape[0] <= 1:
         temp = A2 > 0.5 # 0.5 is threshold value for output node 1
-        return temp.astype(int)
+        return temp[0].astype(int)
     return np.argmax(A2, 0)
 
 def get_accuracy(predictions, Y):
@@ -198,6 +196,8 @@ def bce(y_pred,y_true): #https://stackoverflow.com/questions/67615051/implementi
 
 # https://stats.stackexchange.com/questions/539496/how-to-create-hinge-loss-function-in-python-from-scratch
 def hinge_loss(y_pred, y_true):
+    print("TEST", y_pred)
+    print(y_pred.shape)
     npred = np.array([-1 if i == 0 else i for i in y_pred])
     ntrue = np.array([-1 if i == 0 else i for i in y_true])
 
