@@ -6,48 +6,42 @@ class ANN:
     Initialise network with hyperparameters
     Parameters: 
     """
-    def __init__(self, learn_rate, loss, input, output, lrschedule):
-        self.input = input #input vector 
-        self.output = output #Target class
-        self.layers = [] #assume 7 nodes in the next hidden layer
+    def __init__(self, input, output, learn_rate = 0.1 , epoch = 1, loss = 1, lrschedule = 0):
+        self.input = input # input vector 
+        self.output = output # target class
+        self.layers = [] 
         
         self.learning_rate = learn_rate
-        self.training_epochs = 2
+        self.training_epochs = epoch
 
-        self.lrsched = lrschedule #=0 when using constant lr, else =1 with decay
-
-        self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
+        self.lrsched = None
 
         match loss:
-            # binary cross entropy
             case 1 : self.loss_function = bce
-            # hinge loss
             case 2 : self.loss_function = hinge_loss
             case 3 : self.loss_function = square_loss
-            case other: self.loss_function = None
+            case other: 
+                print("no loss function selected")
+                self.loss_function = None
+
+        if lrschedule == 1:
+            self.lrsched = lrschedule # =0 when using constant lr, else =1 with decay
+            self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
 
     def setLayers(self, activations, *nodes_per_layer):
-        print("the activations are", activations)
-        print("the variable argument is ", nodes_per_layer)
-        print("number of hidden layers", len(nodes_per_layer)-1, "\n")
-        print("input to the network is", self.input)
-        print("the output is", self.output)
 
-        #append input layer
+        # append input layer
         l = layer.Layer(30, nodes_per_layer[0], activations[0])
-        #assign the dataset features as input to the first layer
+        # assign the dataset features as input to the first layer
         l.input = self.input
         self.layers.append(l)
-        print("adding input layer")
 
-        #append hidden layers
+        # append hidden layers
         for i in range (len(nodes_per_layer)-1):
             self.layers.append(layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1]))
-            print("added 1 hidden layer")
 
-        #append output layer
-        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0 ))  #output layer has no output connections or activation function
-        print("added 1 output layer")
+        # append output layer
+        self.layers.append(layer.Layer(nodes_per_layer[-1], 0, 0))  # output layer has no output connections or activation function
 
     def propogate_forward(self):
         for currlayer, nextlayer in zip(self.layers[:-1], self.layers[1:]):
@@ -62,71 +56,68 @@ class ANN:
         # hold cache of gradient vector for weights and biases
         wgrad, bgrad = [], []
 
-        #use one hot encoding with 2 output nodes
+        # use one hot encoding with 2 output nodes
         if self.layers[-1].num_nodes != 1:
-            true_Y = one_hot(self.output)
-        else: #with only one node, no need to use one hot encoding
-            true_Y = self.output
+            true_y = one_hot(self.output)
+        else: # with only one node, no need to use one hot encoding
+            true_y = self.output
 
-        #find the error between the predicted value of the network and the true value(labels)
+        # find the error between the predicted value of the network and the true value(labels)
         layer = self.layers[-2]
-        error = layer.output - true_Y
+        error = layer.output - true_y
 
-        #no. of samples in the current train/test set
+        # no. of samples in the current train/test set
         m = self.output.size
         
-        #back propogate all other layers
-        for i in range(-2, -(len(self.layers)+1), -1):
+        # back propogate all other layers
+        for i in range(-2, -(len(self.layers) + 1), -1):
             
-            wgrad.append((1/ m) * np.dot(error, self.layers[i].input.T))
-            bgrad.append((1/m) *np.sum(error))
+            wgrad.append((1/m) * np.dot(error, self.layers[i].input.T))
+            bgrad.append((1/m) * np.sum(error))
 
-            if i == -(len(self.layers)):
+            if i == -len(self.layers):
                 break
-            #find the error of the next layer
-            error = np.dot((self.layers[i].weights).T,error) * self.layers[i-1].activation_prime(self.layers[i-1].wsum)
+            # find the error of the next layer
+            error = np.dot((self.layers[i].weights).T, error) * self.layers[i-1].activation_prime(self.layers[i-1].wsum)
         
         #after back prop, update the weights and biases
         self.parameter_update(wgrad, bgrad)
 
 
     def parameter_update(self, wgrad, bgrad):
+        # updating weights and bias per layer
         for layer, wupdate, bupdate in zip(reversed(self.layers[:-1]), wgrad, bgrad):
             layer.weights = layer.weights - (self.learning_rate * wupdate)
             layer.bias = layer.bias - (self.learning_rate * bupdate)
     
     def lrschedule(self, epoch):
-       self.learning_rate *= 1/(1 + self.decay * (epoch))
+        # learning rate to decrease with each epoch
+        self.learning_rate *= 1/(1 + self.decay * (epoch))
 
     def train_sgd(self):
-
-        
+        loss = []
         for j in range(self.training_epochs):
 
-            if self.lrschedule:
+            if self.lrsched:
                 #set in the learning schedule 
                 self.lrschedule(j)
 
             # update weights after each sample has been propogate forward and backward
-
             for i in range(200):
                 self.propogate_forward()
                 self.propogate_backward()
 
-                """remove before submission?"""
-                if i%10 == 0:
-                    print("Iteration: ", i)
-                    predictions = get_predictions(self.layers[-1].input)
-                    print("LOSS", self.loss_function(predictions, self.output))
-                    print("Accuracy ", get_accuracy(predictions, self.output))
             predictions = get_predictions(self.layers[-1].input)
-        print("Final Accuracy ", get_accuracy(predictions, self.output))
+            loss.append(self.loss_function(predictions, self.output))
+        return loss, get_accuracy(predictions, self.output)
         
 
     def test(self, input, output):
+        # setting X_test as input and y_test as output
         self.input = input
         self.output = output
 
+        # updating input layer input
         self.layers[0].input = self.input
         self.propogate_forward()
 
@@ -157,53 +148,53 @@ class ANN:
                 error_list.append(cost(X_mini, y_mini, theta))
 """
 
-def get_predictions(A2):
-    if A2.shape[0] <= 1:
-        temp = A2 > 0.5 # 0.5 is threshold value for output node 1
-        return temp[0].astype(int)
-    return np.argmax(A2, 0)
+""" HELPER FUNCTIONS """
 
-def get_accuracy(predictions, Y):
-    return np.sum(predictions == Y) / Y.size
+THRESHOLD = 0.5
 
-def one_hot(Y):
-    one_hot_Y = np.zeros((Y.size, Y.max() + 1))
-    one_hot_Y[np.arange(Y.size), Y] = 1
-    one_hot_Y = one_hot_Y.T
-    return one_hot_Y
+def get_predictions(output):
+    if output.shape[0] <= 1:
+        boolnp = output > THRESHOLD # 0.5 is threshold value for output node 1
+        return boolnp[0].astype(int)
+    return np.argmax(output, 0)
 
-def normalize(x):
-    #normalize the data https://www.kaggle.com/code/joshbeau/tumor-diagnosis-neural-net-from-first-principals
-    x_mean = np.mean(x, axis=1, keepdims=True) #Find the mean of each feature
-    x_max = np.max(x, axis=1, keepdims=True) #Find the maximum of each feature
-    return (x - x_mean)/(x_max) #Normalizing our dataset by subtracting the mean and dividing by the max
+def get_accuracy(predictions, y_true):
+    return np.sum(predictions == y_true) / y_true.size
+
+# one hot encode for output nodes > 1
+def one_hot(y):
+    one_hot_y = np.zeros((y.size, y.max() + 1))
+    one_hot_y[np.arange(y.size), y] = 1
+    one_hot_y = one_hot_y.T
+    return one_hot_y
+
+# normalizing X
+def normalize(X):
+    # normalize the data https://www.kaggle.com/code/joshbeau/tumor-diagnosis-neural-net-from-first-principals
+    X_mean = np.mean(X, axis=1, keepdims=True) # mean of each feature
+    X_max = np.max(X, axis=1, keepdims=True) # maximum of each feature
+    return (X - X_mean)/(X_max) 
 
 
-# # adding epsilon to the predicted output to avoid log(0) error and for stability
-# EPSILON = 1e-7  
+""" LOSS FUNCTIONS """
 
-# def bce(pred, y):
-#     return -np.mean((y * np.log(pred + EPSILON)) + (1 - y ) * np.log(1 - pred + EPSILON))
+EPSILON = 1e-7
 
-"""                                     LOSS FUNCTIONS                            """
-#BINARY CROSS ENTROPY
-def bce(y_pred,y_true): #https://stackoverflow.com/questions/67615051/implementing-binary-cross-entropy-loss-gives-different-answer-than-tensorflows
-    y_pred = np.clip(y_pred, 1e-7, 1 - 1e-7)
-    term_0 = (1-y_true) * np.log(1-y_pred + 1e-7)
-    term_1 = y_true * np.log(y_pred + 1e-7)  
-    print("the error is",  -np.mean(term_0+term_1))
-    return -np.mean(term_0+term_1)
+# binary cross entropy
+# reference: #https://stackoverflow.com/questions/67615051/implementing-binary-cross-entropy-loss-gives-different-answer-than-tensorflows
+def bce(y_pred,y_true): 
+    y_pred = np.clip(y_pred, EPSILON, 1 - EPSILON)
+    return -np.mean(y_true * np.log(y_pred + EPSILON)  + (1 - y_true) * np.log(1 - y_pred + EPSILON))
 
-# https://stats.stackexchange.com/questions/539496/how-to-create-hinge-loss-function-in-python-from-scratch
+# hinge loss
+# reference: https://stats.stackexchange.com/questions/539496/how-to-create-hinge-loss-function-in-python-from-scratch
 def hinge_loss(y_pred, y_true):
-    print("TEST", y_pred)
-    print(y_pred.shape)
     npred = np.array([-1 if i == 0 else i for i in y_pred])
     ntrue = np.array([-1 if i == 0 else i for i in y_true])
 
     return np.mean([max(0, 1 - act * pred) for act, pred in zip(ntrue, npred)])
 
-# this is for classification, formula is different than for regression
-# https://math.stackexchange.com/questions/2370977/square-loss-function-in-classification
+# square loss - this is for classification, formula is different than for regression
+# formula reference: https://math.stackexchange.com/questions/2370977/square-loss-function-in-classification
 def square_loss(y_pred, y_true):
     return np.mean(np.square(1 - y_true * y_pred))
