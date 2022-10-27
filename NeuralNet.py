@@ -115,7 +115,6 @@ class ANN:
             # update weights after each sample has been propogate forward and backward
             for i in range(200):
                 self.propogate_forward()
-                loss.append(self.loss_function(predictions, self.output))
                 self.propogate_backward()
 
             predictions = get_predictions(self.layers[-1].input)

@@ -1,12 +1,10 @@
 import dataset
-import layer
 import NeuralNet
+from ipynb.fs.defs.crossvalidation import kfoldcv
 
 def main():
     # loading the dataset
     data = dataset.load()
-    # splitting
-    X_train, y_train, X_test, y_test = dataset.train_test(data)
 
     print("Initializing Feedforward Neural Network..\n")
 
@@ -29,25 +27,40 @@ def main():
     lrschedule = input("Control learning rate? (learning rate scheduler) [y/N]")
     if lrschedule.lower() == "y":
         lrschedule = 1
-        print("Learning rate scheduler active.")
+        print("Learning rate scheduler active")
     else:
         lrschedule = 0
-        print("Learning rate will remain constant.")
+        print("Learning rate will remain constant")
     
     epoch = int(input("Enter number of training epochs:"))
     loss = int(input("Select type of loss function\n1. Binary Cross Entropy\n2. Hinge Loss\n3. Square Loss\n"))
     #gd = int(input("Select Gradient Descent Algorithm\n1. Stochastic\n2. Batch\n3. Mini Batch\n"))
 
-    print("\nTraining Neural Network..")
-    ann = NeuralNet.ANN(X_train, y_train, lr, epoch, loss, lrschedule)
-    ann.setLayers(activations, nodes)
+    cv_or_split = int(input("Do K - Fold Cross Validation (Enter 1) or Train - Test Split (Enter 2)"))
 
-    ann.get_properties()
-    
-    avgloss, accuracy = ann.train_sgd()
-    print("\nAverage loss over", epoch, "epoch(s)", "is", avgloss)
-    print("Training accuracy over", epoch, "epoch(s)", "is", round(accuracy * 100, 2), "%")
+    if cv_or_split not in [1, 2]:
+        print("incorrect/no option selected, defaulting to train/test split")
 
-    print("\nTesting Neural Network..")
-    test = ann.test(X_test, y_test)
-    print("Testing accuracy is", round(test * 100, 2), "%")
+    if cv_or_split == 1:
+        ann = NeuralNet.ANN(0, 0, lr, epoch, loss, lrschedule)
+        kfoldcv(ann, data)
+
+    else:
+        print("\nTraining Neural Network..")
+        # splitting
+        X_train, y_train, X_test, y_test = dataset.train_test(data)
+        ann = NeuralNet.ANN(X_train, y_train, lr, epoch, loss, lrschedule)
+        ann.setLayers(activations, nodes)
+
+        ann.get_properties()
+        
+        avgloss, accuracy, time = ann.train_sgd()
+        print("\nAverage loss over", epoch, "epoch(s) is", avgloss)
+        print("Training accuracy over", epoch, "epoch(s) is", round(accuracy * 100, 2), "%")
+        print("Training time over", epoch, "epoch(s) is", time, "seconds")
+
+        print("\nTesting Neural Network..")
+        test = ann.test(X_test, y_test)
+        print("Testing accuracy is", round(test * 100, 2), "%")
+
+main()
