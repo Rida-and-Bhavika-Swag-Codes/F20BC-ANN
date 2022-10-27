@@ -171,8 +171,8 @@ def one_hot(y):
 def normalize(X):
     # normalize the data https://www.kaggle.com/code/joshbeau/tumor-diagnosis-neural-net-from-first-principals
     X_mean = np.mean(X, axis=1, keepdims=True) # mean of each feature
-    X_max = np.max(X, axis=1, keepdims=True) # maximum of each feature
-    return (X - X_mean)/(X_max) 
+    X_std = np.std(X, axis=1, keepdims=True) # standard deviation of each feature
+    return (X - X_mean)/(X_std) 
 
 
 """ LOSS FUNCTIONS """
