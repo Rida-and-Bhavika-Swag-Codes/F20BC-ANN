@@ -56,7 +56,7 @@ class ANN:
     """Function to set initial activations of all layers"""
     def setLayers(self, activations, nodes_per_layer):
         # append input layer
-        l = layer.Layer(30, nodes_per_layer[0], activations[0])
+        l = layer.Layer(self.input.shape[0], nodes_per_layer[0], activations[0])
         # assign the dataset features as input to the first layer
         l.input = self.input
         self.layers.append(l)
