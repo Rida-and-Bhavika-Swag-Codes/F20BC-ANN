@@ -23,7 +23,6 @@ Done:
 - 
 To do:
 - Implementing dropout - Rida
-- Implement softmax act - Rida
 - Visualizing results
 
 Report: 
