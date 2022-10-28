@@ -84,7 +84,7 @@ def kfoldsplit(folds):
 
 # running k fold cross validation
 def kfoldcv(data, nfolds = 5, learn_rate = 0.5 , epoch = 200, loss = 1, lrschedule = 0, typegd = 3, bsize = 30, 
-            activations = [3, 3], nodes = [3, 2]):
+            activations = [3, 3, 3], nodes = [5, 5, 2]):
 
     folds = kfolds(data, nfolds)
     train_test = kfoldsplit(folds)
