@@ -18,10 +18,10 @@ Done:
 14. Cross validation testing
 15. Implementing learning rate schedule
 16. Console for user inputs
-
-To do:
 - Batch GD - Rida
 - Mini batch GD - Rida
+- 
+To do:
 - Implementing dropout - Rida
 - Implement softmax act - Rida
 - Visualizing results
