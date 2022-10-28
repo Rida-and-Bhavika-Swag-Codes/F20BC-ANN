@@ -20,9 +20,7 @@ Done:
 16. Console for user inputs
 - Batch GD - Rida
 - Mini batch GD - Rida
-- 
-To do:
-- Implementing dropout - Rida
+- - Implementing dropout - Rida
 - Visualizing results
 
 Report: 
