@@ -6,7 +6,7 @@ class ANN:
     """
     Initialise network with hyperparameters
     """
-    def __init__(self, input, output, typegd, learn_rate = 0.1 , epoch = 100, loss = 2, lrschedule = 0, bsize =1):
+    def __init__(self, input, output, typegd, bsize, learn_rate , epoch, loss, lrschedule = 0):
 
         self.input = input # input vector 
         self.output = output # target class
@@ -19,17 +19,19 @@ class ANN:
         self.decay = None
         self.batchsize = None
         
+        #set type of gradient descent
         match typegd:
             case 1: #batch gradient descent
                 self.batchsize = self.input.shape[1] 
                 self.typegd = self.train_mbgd
 
             case 2: #mini batch gradient descent
+                self.batchsize = bsize
                 self.typegd = self.train_mbgd
 
             case 0: #default to stochastic gradient descent
+                self.batchsize = 1
                 self.typegd = self.train_sgd
-
 
 
         match loss:
@@ -119,7 +121,7 @@ class ANN:
         self.learning_rate *= 1/(1 + self.decay * (epoch))
 
     def train_sgd(self):
-        start_time = time.time()
+        start_time = time.time() #???
         loss = []
         for j in range(self.training_epochs):
 
@@ -186,11 +188,12 @@ class ANN:
             mini_batches = self.create_batches()
             for mini_batch in mini_batches:
                 X_mini, y_mini = mini_batch
+                print("batch size is", X_mini.shape[1])
                 self.layers[0].input = X_mini
                 self.propogate_forward()
                 #calculate loss/cost
                 predictions = get_predictions(self.layers[-1].input)
-                loss.append(self.loss_function(predictions, self.output))
+                loss.append(self.loss_function(predictions, y_mini))
                 print(y_mini)
                 print("h", y_mini.flatten(), "h")
                 self.propogate_backward(y_mini.flatten())
