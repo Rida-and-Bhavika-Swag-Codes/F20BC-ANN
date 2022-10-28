@@ -38,8 +38,9 @@ def main():
 
     typegd = int(input("\nSelect Gradient Descent Algorithm\n1. Stochastic\n2. Batch\n3. Mini Batch\n"))
     bsize = 1
+
     if typegd == 3:
-        bsize = int(input("Enter the number of mini batches:"))
+        bsize = int(input("Enter the batch size:"))
 
     cv_or_split = int(input("\nDo K - Fold Cross Validation (Enter 1) or Train - Test Split (Enter 2):"))
 
