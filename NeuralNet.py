@@ -131,7 +131,10 @@ class ANN:
         end_time = time.time() #????
         return sum(loss)/len(loss), get_accuracy(predictions, self.output)
     
-
+    """
+    Function to create mini batches for mini-batch gradient descent
+    reference: https://www.geeksforgeeks.org/ml-mini-batch-gradient-descent-with-python/
+    """
     def create_batches(self):
         # create a list to hold all minibatches
         mini_batches = []
@@ -140,14 +143,13 @@ class ANN:
         data = np.hstack((self.input.T, y)) 
         #shuffle data
         np.random.shuffle(data)
-        i = 0
 
         for i in range((data.shape[0] // self.batchsize)):
             #slice a minibatch out of the data list
             mini_batch = data[i * self.batchsize:(i + 1)*self.batchsize, :]
             #seperate the previously concatenated X and Y data before training
             X_mini = mini_batch[:, :-1].T
-            Y_mini = mini_batch[:, -1].reshape((-1, 1))
+            Y_mini = mini_batch[:, -1]
             #add new mini batch 
             mini_batches.append((X_mini, Y_mini))
 
@@ -155,7 +157,7 @@ class ANN:
         if data.shape[0] % self.batchsize != 0:
             mini_batch = data[i * self.batchsize:data.shape[0]]
             X_mini = mini_batch[:, :-1].T
-            Y_mini = mini_batch[:, -1].reshape((-1, 1))
+            Y_mini = mini_batch[:, -1]
             mini_batches.append((X_mini, Y_mini))
         return mini_batches
 
@@ -163,15 +165,16 @@ class ANN:
     def train_mbgd(self):
         loss = []
         for i in range(self.training_epochs):
-            mini_batches = self.create_batches()
-            for mini_batch in mini_batches:
-                X_mini, y_mini = mini_batch
-                self.layers[0].input = X_mini
+            mbatches = self.create_batches()
+            for mbatch in mbatches:
+                x, y = mbatch
+                #set the first layers input as the current minibatch
+                self.layers[0].input = x
                 self.propogate_forward()
                 #calculate loss/cost
                 predictions = get_predictions(self.layers[-1].input)
-                loss.append(self.loss_function(predictions, y_mini))
-                self.propogate_backward(y_mini.flatten())
+                loss.append(self.loss_function(predictions, y))
+                self.propogate_backward(y.flatten())
         end_time = time.time()
         return sum(loss)/len(loss), get_accuracy(predictions, self.output)
                 
