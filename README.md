@@ -63,6 +63,7 @@ Note: Network now configurable for activations and no. of hidden layers/nodes. C
 12. https://www.freecodecamp.org/news/building-a-neural-network-from-scratch/
 13. ** MINI BATCHES use the last answer ** https://stackoverflow.com/questions/38157972/how-to-implement-mini-batch-gradient-descent-in-python 
 14. ** RESEARCH PAPER 1 **: https://www.researchgate.net/publication/355144320_Computer-aided_detection_of_breast_cancer_on_the_Wisconsin_dataset_An_artificial_neural_networks_approach
+15. ** RESEARCH PAPER 2 **: https://www.mdpi.com/2073-8994/12/2/271/htm
 ## For our ANN: 
 ### Activation Functions: 
 - Logistic
