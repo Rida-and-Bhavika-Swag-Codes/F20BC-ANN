@@ -6,7 +6,7 @@ class ANN:
     """
     Initialise network with hyperparameters
     """
-    def __init__(self, input, output, typegd, learn_rate = 0.1 , epoch = 100, loss = 2, lrschedule = 0, bsize =1):
+    def __init__(self, input, output, typegd, bsize, learn_rate , epoch, loss, lrschedule = 0):
 
         self.input = input # input vector 
         self.output = output # target class
@@ -19,17 +19,19 @@ class ANN:
         self.decay = None
         self.batchsize = None
         
+        #set type of gradient descent
         match typegd:
             case 1: #batch gradient descent
                 self.batchsize = self.input.shape[1] 
                 self.typegd = self.train_mbgd
 
             case 2: #mini batch gradient descent
+                self.batchsize = bsize
                 self.typegd = self.train_mbgd
 
             case 0: #default to stochastic gradient descent
+                self.batchsize = 1
                 self.typegd = self.train_sgd
-
 
 
         match loss:
@@ -119,7 +121,7 @@ class ANN:
         self.learning_rate *= 1/(1 + self.decay * (epoch))
 
     def train_sgd(self):
-        start_time = time.time()
+        start_time = time.time() #???
         loss = []
         for j in range(self.training_epochs):
 
@@ -152,7 +154,6 @@ class ANN:
         # create a list to hold all minibatches
         mini_batches = []
         #concatenate each sample with its corresponding label
-        print(self.input.T)
         y = np.resize(self.output, (len(self.input.T),1))
         data = np.hstack((self.input.T, y)) 
         #shuffle data
@@ -164,15 +165,12 @@ class ANN:
             mini_batch = data[i * self.batchsize:(i + 1)*self.batchsize, :]
             #seperate the previously concatenated X and Y data before training
             X_mini = mini_batch[:, :-1].T
-            print("X_mini being added is", X_mini)
             Y_mini = mini_batch[:, -1].reshape((-1, 1))
-            print("Y_mini being added is", Y_mini)
             #add new mini batch 
             mini_batches.append((X_mini, Y_mini))
 
         # when batch size doesnt divide the no.of samples perfectly, seperately append the last batch (will be of a different size)
         if data.shape[0] % self.batchsize != 0:
-            print("in unequal minibatch creation")
             mini_batch = data[i * self.batchsize:data.shape[0]]
             X_mini = mini_batch[:, :-1].T
             Y_mini = mini_batch[:, -1].reshape((-1, 1))
@@ -190,9 +188,7 @@ class ANN:
                 self.propogate_forward()
                 #calculate loss/cost
                 predictions = get_predictions(self.layers[-1].input)
-                loss.append(self.loss_function(predictions, self.output))
-                print(y_mini)
-                print("h", y_mini.flatten(), "h")
+                loss.append(self.loss_function(predictions, y_mini))
                 self.propogate_backward(y_mini.flatten())
         end_time = time.time()
         return sum(loss)/len(loss), get_accuracy(predictions, self.output)
