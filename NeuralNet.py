@@ -6,7 +6,7 @@ class ANN:
     """
     Initialise network with hyperparameters
     """
-    def __init__(self, input, output, typegd = 0, bsize = 1, learn_rate=0.1 , epoch = 100, loss = 1, lrschedule = 0):
+    def __init__(self, input, output, learn_rate = 0.5 , epoch = 200, loss = 1, lrschedule = 0, typegd = 3, bsize = 30):
 
         self.input = input # input vector 
         self.output = output # target class
@@ -15,24 +15,30 @@ class ANN:
         self.learning_rate = learn_rate
         self.training_epochs = epoch
 
-        self.lrsched = None
+        self.lrsched = lrschedule # =0 when using constant lr, else =1 with decay
         self.decay = None
-        self.batchsize = None
+
+        if lrschedule == 1:
+            self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
+
+        self.typegd = self.train_sgd
+        self.batchsize = 1
         
-        #set type of gradient descent
+        # set type of gradient descent
         match typegd:
-            case 1: #batch gradient descent
+            case 1: #default stochastic gradient descent
+                pass
+
+            case 2: #batch gradient descent
                 self.batchsize = self.input.shape[1] 
                 self.typegd = self.train_mbgd
 
-            case 2: #mini batch gradient descent
+            case 3: #mini batch gradient descent
                 self.batchsize = bsize
                 self.typegd = self.train_mbgd
 
-            case 0: #default to stochastic gradient descent
-                self.batchsize = 1
-                self.typegd = self.train_sgd
-
+            case other:
+                print("incorrect gradient descent option, defaulting to stochastic")
 
         match loss:
             case 1 : self.loss_function = bce
@@ -42,9 +48,9 @@ class ANN:
                 print("no loss function selected")
                 self.loss_function = None
 
-        if lrschedule == 1:
-            self.lrsched = lrschedule # =0 when using constant lr, else =1 with decay
-            self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
+
+
+
 
     """Function to set initial activations of all layers"""
     def setLayers(self, activations, nodes_per_layer):
@@ -62,6 +68,9 @@ class ANN:
         l = layer.Layer(nodes_per_layer[-1], 0, 0)
         self.layers.append(l)  # output layer has no output connections or activation function
        
+
+
+
     """Function to propgate all layers : finding the activations of all layers"""
     def propogate_forward(self):
         for currlayer, nextlayer in zip(self.layers[:-1], self.layers[1:]):
@@ -71,6 +80,9 @@ class ANN:
             currlayer.output = currlayer.activation(currlayer.wsum)
             #set next layers input as the output frm this layer 
             nextlayer.input = currlayer.output
+
+
+
 
     """Function to propgate all layers backwards"""
     def propogate_backward(self, truey):
@@ -103,6 +115,9 @@ class ANN:
         #after back prop, update the weights and biases
         self.parameter_update(wgrad, bgrad)
 
+
+
+
     """Function used to update parameters: use after backprop"""
     def parameter_update(self, wgrad, bgrad):
         # updating weights and bias per layer
@@ -110,30 +125,41 @@ class ANN:
             layer.weights = layer.weights - (self.learning_rate * wupdate)
             layer.bias = layer.bias - (self.learning_rate * bupdate)
     
+
+
+
     """Function to set a new learning rate when using learning rate schedule"""
     def lrschedule(self, epoch):
         # learning rate to decrease with each epoch
         self.learning_rate *= 1/(1 + self.decay * (epoch))
 
+
+
     """Function to train with stochastic gradient descent"""
     def train_sgd(self):
-        start_time = time.time() #???
+        start_time = time.time() 
         loss = []
-        for j in range(self.training_epochs):
+        acc = []
 
-            if self.lrsched:
+        for i in range(self.training_epochs):
+
+            if self.lrsched == 1:
                 #set in the learning schedule 
-                self.lrschedule(j)
+                self.lrschedule(i)
             # update weights after each sample has been propogate forward and backward
-            for i in range(self.training_epochs):
-                self.propogate_forward()
-                #calculate loss/cost
-                predictions = get_predictions(self.layers[-1].input)
-                loss.append(self.loss_function(predictions, self.output))
-                self.propogate_backward(self.output)
-        end_time = time.time() #????
-        return sum(loss)/len(loss), get_accuracy(predictions, self.output)
+            self.propogate_forward()
+            #calculate loss/cost
+            predictions = get_predictions(self.layers[-1].input)
+            loss.append(self.loss_function(predictions, self.output))
+            acc.append(get_accuracy(predictions, self.output))
+            self.propogate_backward(self.output)
+
+        end_time = time.time() 
+        return sum(loss)/len(loss), sum(acc)/len(acc), end_time - start_time
     
+
+
+
     """
     Function to create mini batches for mini-batch gradient descent
     reference: https://www.geeksforgeeks.org/ml-mini-batch-gradient-descent-with-python/
@@ -164,11 +190,16 @@ class ANN:
             mini_batches.append((X_mini, Y_mini))
         return mini_batches
 
+
     """Function to train with batch and mini-batch gradient descent"""
     def train_mbgd(self):
+
+        start_time = time.time() 
         loss = []
+        acc = []
         for i in range(self.training_epochs):
             mbatches = self.create_batches()
+
             for mbatch in mbatches:
                 x, y = mbatch
                 #set the first layers input as the current minibatch
@@ -177,11 +208,19 @@ class ANN:
                 #calculate loss/cost
                 predictions = get_predictions(self.layers[-1].input)
                 loss.append(self.loss_function(predictions, y))
+                acc.append(get_accuracy(predictions, y))
                 self.propogate_backward(y.flatten())
+
         end_time = time.time()
-        return sum(loss)/len(loss), get_accuracy(predictions, self.output)
-                
-    """"""              
+        return sum(loss)/len(loss), sum(acc)/len(acc), end_time - start_time
+
+
+
+
+    """"""    
+    def train(self):
+        return self.typegd()
+
     def test(self, input, output):
         # setting X_test as input and y_test as output
         self.input = input
@@ -194,6 +233,9 @@ class ANN:
         predictions = get_predictions(self.layers[-1].input)
         return get_accuracy(predictions, self.output)
     
+
+
+
     """Function to display properties of the network - useful for debugginng"""
     def get_properties(self):
         print("Number of layers:", len(self.layers))
