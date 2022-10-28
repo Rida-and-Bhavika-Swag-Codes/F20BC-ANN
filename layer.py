@@ -9,12 +9,14 @@ class Layer:
         self.wsum = None
         self.activation, self.activation_prime = self.setActivation(activation)
 
+        #set seed to get same random initialisations
+        np.random.seed(42)
         # number of rows in weight matrix = number of nodes in the layer
         # number of colums = number of nodes in the next layer/number of output connections
         self.weights = np.random.rand(output_connections, self.num_nodes) - 0.5
         self.bias = np.random.rand(output_connections, 1) - 0.5     
     
-    """debug function"""
+    """Function to display properties of the network - useful for debugginng"""
     def get_properties(self):
         print("Number of nodes:", self.num_nodes)
         print("Activation Function:", self.activation)
@@ -22,7 +24,6 @@ class Layer:
         # print("Bias:", self.bias)
         # print("Input vector:", self.input)
         # print("Output vector:", self.output)
-        print()
     
     """Take a integer as input and match it with an activation function. Then, return matched function"""
     def setActivation(self, activation):
@@ -58,4 +59,3 @@ def drelu(wsum):
 def dsigmoid(wsum):
     sigm = sigmoid(wsum)
     return sigm * (1 - sigm)
-

@@ -46,8 +46,8 @@ class ANN:
             self.lrsched = lrschedule # =0 when using constant lr, else =1 with decay
             self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
 
+    """Function to set initial activations of all layers"""
     def setLayers(self, activations, nodes_per_layer):
-
         # append input layer
         l = layer.Layer(30, nodes_per_layer[0], activations[0])
         # assign the dataset features as input to the first layer
@@ -62,7 +62,7 @@ class ANN:
         l = layer.Layer(nodes_per_layer[-1], 0, 0)
         self.layers.append(l)  # output layer has no output connections or activation function
        
-
+    """Function to propgate all layers : finding the activations of all layers"""
     def propogate_forward(self):
         for currlayer, nextlayer in zip(self.layers[:-1], self.layers[1:]):
             #calculate weighted sum
@@ -72,6 +72,7 @@ class ANN:
             #set next layers input as the output frm this layer 
             nextlayer.input = currlayer.output
 
+    """Function to propgate all layers backwards"""
     def propogate_backward(self, truey):
 
         # hold cache of gradient vector for weights and biases
@@ -102,17 +103,19 @@ class ANN:
         #after back prop, update the weights and biases
         self.parameter_update(wgrad, bgrad)
 
-
+    """Function used to update parameters: use after backprop"""
     def parameter_update(self, wgrad, bgrad):
         # updating weights and bias per layer
         for layer, wupdate, bupdate in zip(reversed(self.layers[:-1]), wgrad, bgrad):
             layer.weights = layer.weights - (self.learning_rate * wupdate)
             layer.bias = layer.bias - (self.learning_rate * bupdate)
     
+    """Function to set a new learning rate when using learning rate schedule"""
     def lrschedule(self, epoch):
         # learning rate to decrease with each epoch
         self.learning_rate *= 1/(1 + self.decay * (epoch))
 
+    """Function to train with stochastic gradient descent"""
     def train_sgd(self):
         start_time = time.time() #???
         loss = []
@@ -161,7 +164,7 @@ class ANN:
             mini_batches.append((X_mini, Y_mini))
         return mini_batches
 
-
+    """Function to train with batch and mini-batch gradient descent"""
     def train_mbgd(self):
         loss = []
         for i in range(self.training_epochs):
@@ -178,7 +181,7 @@ class ANN:
         end_time = time.time()
         return sum(loss)/len(loss), get_accuracy(predictions, self.output)
                 
-                        
+    """"""              
     def test(self, input, output):
         # setting X_test as input and y_test as output
         self.input = input
@@ -191,6 +194,7 @@ class ANN:
         predictions = get_predictions(self.layers[-1].input)
         return get_accuracy(predictions, self.output)
     
+    """Function to display properties of the network - useful for debugginng"""
     def get_properties(self):
         print("Number of layers:", len(self.layers))
         print("Learning rate:", self.learning_rate)
