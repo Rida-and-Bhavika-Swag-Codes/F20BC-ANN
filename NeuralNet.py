@@ -53,21 +53,15 @@ class ANN:
         # assign the dataset features as input to the first layer
         l.input = self.input
         self.layers.append(l)
-        # print("added input layer")
-        # layer.Layer.get_properties(l)
 
         # append hidden layers
         for i in range (len(nodes_per_layer)-1):
             l = layer.Layer(nodes_per_layer[i], nodes_per_layer[i+1], activations[i+1])
             self.layers.append(l)
-            # print("added 1 hidden layer")
-            # layer.Layer.get_properties(l)
-
         # append output layer
         l = layer.Layer(nodes_per_layer[-1], 0, 0)
         self.layers.append(l)  # output layer has no output connections or activation function
-        # print("added output layer")
-        # layer.Layer.get_properties(l)
+       
 
     def propogate_forward(self):
         for currlayer, nextlayer in zip(self.layers[:-1], self.layers[1:]):
@@ -79,9 +73,9 @@ class ANN:
             nextlayer.input = currlayer.output
 
     def propogate_backward(self, truey):
+
         # hold cache of gradient vector for weights and biases
         wgrad, bgrad = [], []
-
         # use one hot encoding with 2 output nodes
         if self.layers[-1].num_nodes != 1:
             true_y = one_hot(truey)
@@ -91,13 +85,12 @@ class ANN:
         # find the error between the predicted value of the network and the true value(labels)
         layer = self.layers[-2]
         error = layer.output - true_y
-
         # no. of samples in the current train/test set
         m = truey.size
         
         # back propogate all other layers
         for i in range(-2, -(len(self.layers) + 1), -1):
-            
+
             wgrad.append((1/m) * np.dot(error, self.layers[i].input.T))
             bgrad.append((1/m) * np.sum(error))
 
@@ -128,7 +121,6 @@ class ANN:
             if self.lrsched:
                 #set in the learning schedule 
                 self.lrschedule(j)
-
             # update weights after each sample has been propogate forward and backward
             for i in range(self.training_epochs):
                 self.propogate_forward()
@@ -139,18 +131,8 @@ class ANN:
         end_time = time.time() #????
         return sum(loss)/len(loss), get_accuracy(predictions, self.output)
     
+
     def create_batches(self):
-        """
-        mbatches = []
-        data = np.arange(self.input.shape[0])
-        print("the arange of data size", data)
-        np.random.shuffle(data)
-        for i in range(0, self.input.shape[0], self.batchsize):
-            last = min(i + self.batchsize, self.input.shape[0])
-            batch = data[i:last]
-            mbatches.append((self.input[batch], self.output[batch]))
-        return mbatches
-        """
         # create a list to hold all minibatches
         mini_batches = []
         #concatenate each sample with its corresponding label
@@ -214,30 +196,6 @@ class ANN:
         print("Decay:", self.decay)
 
 
-    # def iterate_minibatches(inputs, targets, batchsize, shuffle=False):
-    #     if shuffle:
-    #         indices = np.arange(inputs.shape[0])
-    #         np.random.shuffle(indices)
-    #     for start_idx in range(0, inputs.shape[0], batchsize):
-    #         end_idx = min(start_idx + batchsize, inputs.shape[0])
-    #         if shuffle:
-    #             excerpt = indices[start_idx:end_idx]
-    #         else:
-    #             excerpt = slice(start_idx, end_idx)
-    #         yield inputs[excerpt], targets[excerpt]
-    """
-    def gradientDescent(X, y, learning_rate=0.001, batch_size=32):
-        theta = np.zeros((X.shape[1], 1))
-        error_list = []
-        max_iters = 3
-        for itr in range(max_iters):
-            mini_batches = create_mini_batches(X, y, batch_size)
-            for mini_batch in mini_batches:
-                X_mini, y_mini = mini_batch
-                theta = theta - learning_rate * gradient(X_mini, y_mini, theta)
-                error_list.append(cost(X_mini, y_mini, theta))
-    """
-
 """ HELPER FUNCTIONS """
 
 THRESHOLD = 0.5
@@ -253,6 +211,7 @@ def get_accuracy(predictions, y_true):
 
 # one hot encode for output nodes > 1
 def one_hot(y):
+    y = y.astype(int)
     one_hot_y = np.zeros((y.size, y.max() + 1))
     one_hot_y[np.arange(y.size), y] = 1
     one_hot_y = one_hot_y.T
