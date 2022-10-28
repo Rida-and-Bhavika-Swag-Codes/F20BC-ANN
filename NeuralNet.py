@@ -6,7 +6,7 @@ class ANN:
     """
     Initialise network with hyperparameters
     """
-    def __init__(self, input, output, learn_rate = 0.5 , epoch = 200, loss = 1, lrschedule = 0, typegd = 3, bsize = 30):
+    def __init__(self, input, output, learn_rate = 0.5 , epoch = 200, loss = 1, lrschedule = 1, typegd = 3, bsize = 30):
 
         self.input = input # input vector 
         self.output = output # target class
@@ -15,10 +15,11 @@ class ANN:
         self.learning_rate = learn_rate
         self.training_epochs = epoch
 
-        self.lrsched = lrschedule # =0 when using constant lr, else =1 with decay
+        self.lrsched = None # =0 when using constant lr, else =1 with decay
         self.decay = None
 
         if lrschedule == 1:
+            self.lrsched = 1
             self.decay = self.learning_rate/self.training_epochs # for learning rate scheduler 
 
         self.typegd = self.train_sgd
@@ -143,7 +144,7 @@ class ANN:
 
         for i in range(self.training_epochs):
 
-            if self.lrsched == 1:
+            if self.lrsched:
                 #set in the learning schedule 
                 self.lrschedule(i)
             # update weights after each sample has been propogate forward and backward
@@ -198,8 +199,13 @@ class ANN:
         loss = []
         acc = []
         for i in range(self.training_epochs):
-            mbatches = self.create_batches()
 
+            if self.lrsched:
+                #set in the learning schedule 
+                self.lrschedule(i)
+
+            mbatches = self.create_batches()
+            
             for mbatch in mbatches:
                 x, y = mbatch
                 #set the first layers input as the current minibatch

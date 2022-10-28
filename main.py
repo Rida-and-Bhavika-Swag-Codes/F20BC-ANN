@@ -69,4 +69,5 @@ def main():
         test = ann.test(X_test, y_test)
         print("Testing accuracy is", round(test * 100, 2), "%")
 
-main()
+if __name__ == '__main__':
+  main()
