@@ -11,16 +11,18 @@ def main():
     nodes = []
     activations = []
     #input_nodes = int(input("Enter number of nodes in input layer:"))
-    activations.append(int(input("\nSelect input layer's activation function" + 
-        "\n1. Hyperbolic tangent (tanh𝑥)\n2. ReLU (Rectified Linear Unit)\n3. Logistic function (Sigmoid)\n")))
 
     nhiddenlayers = int(input("\nEnter number of hidden layers:"))
     for i in range(nhiddenlayers):
         nodes.append(int(input("Enter number of hidden neurons in hidden layer " + str((i + 1)) + ":")))
-        activations.append(int(input("Select hidden layer's activation function" + 
+        activations.append(int(input("\nSelect hidden layer's activation function" + 
         "\n1. Hyperbolic tangent (tanh𝑥)\n2. ReLU (Rectified Linear Unit)\n3. Logistic function (Sigmoid)\n")))
 
     nodes.append(int(input("\nEnter number of output nodes (1 or 2):")))
+    
+    activations.append(int(input("\nSelect output layer's activation function" + 
+        "\n1. Hyperbolic tangent (tanh𝑥)\n2. ReLU (Rectified Linear Unit)\n3. Logistic function (Sigmoid)\n")))
+
 
     lr = float(input("\nEnter learning rate:"))
     lrschedule = input("Control learning rate? (learning rate scheduler) [y/N]:")
