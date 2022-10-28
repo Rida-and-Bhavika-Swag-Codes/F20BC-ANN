@@ -154,7 +154,6 @@ class ANN:
         # create a list to hold all minibatches
         mini_batches = []
         #concatenate each sample with its corresponding label
-        print(self.input.T)
         y = np.resize(self.output, (len(self.input.T),1))
         data = np.hstack((self.input.T, y)) 
         #shuffle data
@@ -166,15 +165,12 @@ class ANN:
             mini_batch = data[i * self.batchsize:(i + 1)*self.batchsize, :]
             #seperate the previously concatenated X and Y data before training
             X_mini = mini_batch[:, :-1].T
-            print("X_mini being added is", X_mini)
             Y_mini = mini_batch[:, -1].reshape((-1, 1))
-            print("Y_mini being added is", Y_mini)
             #add new mini batch 
             mini_batches.append((X_mini, Y_mini))
 
         # when batch size doesnt divide the no.of samples perfectly, seperately append the last batch (will be of a different size)
         if data.shape[0] % self.batchsize != 0:
-            print("in unequal minibatch creation")
             mini_batch = data[i * self.batchsize:data.shape[0]]
             X_mini = mini_batch[:, :-1].T
             Y_mini = mini_batch[:, -1].reshape((-1, 1))
@@ -188,14 +184,11 @@ class ANN:
             mini_batches = self.create_batches()
             for mini_batch in mini_batches:
                 X_mini, y_mini = mini_batch
-                print("batch size is", X_mini.shape[1])
                 self.layers[0].input = X_mini
                 self.propogate_forward()
                 #calculate loss/cost
                 predictions = get_predictions(self.layers[-1].input)
                 loss.append(self.loss_function(predictions, y_mini))
-                print(y_mini)
-                print("h", y_mini.flatten(), "h")
                 self.propogate_backward(y_mini.flatten())
         end_time = time.time()
         return sum(loss)/len(loss), get_accuracy(predictions, self.output)
