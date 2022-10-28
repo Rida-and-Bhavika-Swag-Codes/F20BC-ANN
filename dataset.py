@@ -93,17 +93,19 @@ def kfoldcv(data, nfolds = 5, learn_rate = 0.1 , epoch = 200, loss = 1, lrschedu
     fold = 1
     for i in train_test:
         print("\nCross Validating Fold", fold)
+        # splitting test from fold
         X_test = np.asarray(i[-1].drop(i[0].columns[0], axis = 1)).T
         y_test = np.array(i[-1].iloc[:,0]).T
 
         X_test = normalize(X_test)
 
+        # splitting train from fold
         X_train = np.array(i[0].drop(i[0].columns[0], axis = 1)).T
         y_train = np.array(i[0].iloc[:,0]).T
         
         X_train = normalize(X_train)
 
-
+        # initializing neural network and setting the layers
         ann = NeuralNet.ANN(X_train, y_train, learn_rate, epoch, loss, lrschedule, typegd , bsize)
         ann.setLayers(activations, nodes)
         ann.get_properties()

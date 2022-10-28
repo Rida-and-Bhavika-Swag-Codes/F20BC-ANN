@@ -6,7 +6,7 @@ class ANN:
     """
     Initialise network with hyperparameters
     """
-    def __init__(self, input, output, learn_rate = 0.1 , epoch = 200, loss = 1, lrschedule = 1, typegd = 3, bsize = 30):
+    def __init__(self, input, output, learn_rate = 0.1 , epoch = 200, loss = 1, lrschedule = 0, typegd = 3, bsize = 30):
 
         self.input = input # input vector 
         self.output = output # target class
